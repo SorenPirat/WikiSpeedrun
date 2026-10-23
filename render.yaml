@@ -2,6 +2,7 @@ services:
   - type: web
     name: wikispeedrun-multiplayer
     runtime: node
+    plan: free
     buildCommand: npm ci
     startCommand: npm run server
     healthCheckPath: /health
