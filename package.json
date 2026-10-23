@@ -22,7 +22,10 @@
     "lint:fix": "oxlint --type-aware --fix",
     "doctor": "react-doctor -y --no-score --blocking error",
     "test:browser": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "server": "node server/index.js",
+    "server:dev": "node --watch server/index.js",
+    "server:test": "node --test server/index.test.js server/rooms.test.js"
   },
   "dependencies": {
     "@fontsource-variable/noto-sans": "5.3.0",
@@ -55,7 +58,8 @@
     "react-select": "5.10.2",
     "tailwind-merge": "3.7.0",
     "unbound-zustand-querystring": "0.2.4",
-    "zustand": "5.0.15"
+    "zustand": "5.0.15",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",

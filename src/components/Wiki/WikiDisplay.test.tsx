@@ -58,14 +58,14 @@ testWithMSW("Show/Hide button works correctly", async () => {
 
 testWithMSW("same-page links scroll to targets in the article root", async () => {
   testWorker.use(
-    http.get("https://en.wikipedia.org/w/api.php", () =>
+    http.get("https://da.wikipedia.org/w/api.php", () =>
       HttpResponse.json({
         parse: {
           title: "Hash Test",
           pageid: 1,
           revid: 2,
           text: {
-            "*": '<div class="mw-parser-output"><a href="#wiki-test-target">Jump</a><p id="wiki-test-target">Target</p><a href="https://en.wikipedia.org/wiki/Target_Article">Next article</a></div>',
+            "*": '<div class="mw-parser-output"><a href="#wiki-test-target">Jump</a><p id="wiki-test-target">Target</p><a href="https://da.wikipedia.org/wiki/Target_Article">Next article</a></div>',
           },
         },
       }),
@@ -105,7 +105,7 @@ testWithMSW(
   { timeout: 30_000 },
   async () => {
     testWorker.use(
-      http.get("https://en.wikipedia.org/w/api.php", ({ request }) => {
+      http.get("https://da.wikipedia.org/w/api.php", ({ request }) => {
         const url = new URL(request.url);
         if (url.searchParams.get("action") !== "parse") {
           return passthrough();

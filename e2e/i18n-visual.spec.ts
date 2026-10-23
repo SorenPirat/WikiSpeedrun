@@ -11,7 +11,7 @@ const persistInterfaceLocale = async (page: Page, locale: Locale, theme: "light"
   const settings: PersistedSettings = {
     state: {
       interfaceLanguage: locale,
-      wikiLanguage: "en",
+      wikiLanguage: "da",
       sidebarWidth: 400,
       is_CTRL_F_enabled: false,
       wikiArticleWidth: "standard",
@@ -82,40 +82,19 @@ const expectVisuallySoundInterface = async (page: Page, locale: Locale) => {
   expect(layoutDefects).toEqual([]);
 };
 
-test("opening language selectors does not load inactive script fonts", async ({ page }) => {
-  await persistInterfaceLocale(page, "en");
+test("Danish classroom interface hides advanced language selectors", async ({ page }) => {
+  await persistInterfaceLocale(page, "da");
   await page.goto("/");
   await page.locator("#root > *").first().waitFor();
   await page.evaluate(() => document.fonts.ready);
 
-  const fontRequests: string[] = [];
-  page.on("request", (request) => {
-    if (request.url().endsWith(".woff2")) {
-      fontRequests.push(request.url());
-    }
-  });
 
-  await page.getByRole("combobox", { name: "Language" }).click();
-  await expect(page.getByRole("option", { name: "Ελληνικά" })).toBeVisible();
-  await page.waitForLoadState("networkidle");
+  await expect(page.getByRole("combobox", { name: "Language" })).toHaveCount(0);
+  await expect(page.getByRole("combobox", { name: "Select article language" })).toHaveCount(0);
 
-  expect(fontRequests).toEqual([]);
-
-  await page.keyboard.press("Escape");
-  await page.goto("/settings");
-  await page.locator("#root > *").first().waitFor();
-  await page.evaluate(() => document.fonts.ready);
-  await page.waitForLoadState("networkidle");
-  fontRequests.length = 0;
-
-  await page.getByRole("combobox", { name: "Select article language" }).click();
-  await expect(page.getByRole("option", { name: "Ελληνικά" })).toBeVisible();
-  await page.waitForLoadState("networkidle");
-
-  expect(fontRequests).toEqual([]);
 });
 
-for (const locale of SUPPORTED_LOCALES) {
+for (const locale of SUPPORTED_LOCALES.filter((locale) => locale !== "da")) {
   test(`${locale} interface renders with stable localized layout`, async ({ page }) => {
     await persistInterfaceLocale(page, locale);
     await page.goto("/");

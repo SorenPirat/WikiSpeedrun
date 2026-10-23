@@ -12,11 +12,11 @@ const expectNoCrash = async (page: Page) => {
 };
 
 const PAGES = [
-  { path: "/", heading: "Wiki Speedrun Spiel" },
-  { path: "/about", heading: "Wiki Speedrun Spiel" },
-  { path: "/settings", heading: "Einstellungen" },
-  { path: "/stats", heading: "Statistiken" },
-  { path: "/achievements", heading: "Errungenschaften" },
+  { path: "/", heading: "Wiki Speedrun" },
+  { path: "/about", heading: "Wiki Speedrun" },
+  { path: "/settings", heading: "Spilopsætning" },
+  { path: "/stats", heading: "Statistik" },
+  { path: "/achievements", heading: "Præstationer" },
 ] as const;
 
 test.describe("fresh visitor with a non-default browser language", () => {
@@ -32,22 +32,22 @@ test.describe("fresh visitor with a non-default browser language", () => {
       await expectNoCrash(page);
     }
 
-    await expect(page.locator("html")).toHaveAttribute("lang", "de");
+    await expect(page.locator("html")).toHaveAttribute("lang", "da");
     expect(pageErrors).toEqual([]);
 
     // The detected language is persisted on the first visit; a reload must
-    // keep the German interface instead of falling back to the source locale.
+    // keep the Danish interface after the first visit.
     await page.goto("/");
     await page.reload();
-    await expect(page.getByRole("heading", { name: "Wiki Speedrun Spiel" })).toBeVisible();
-    await expect(page.locator("html")).toHaveAttribute("lang", "de");
+    await expect(page.getByRole("heading", { name: "Wiki Speedrun" })).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", "da");
   });
 
   test("an unknown route renders the localized not-found page", async ({ page }) => {
     await page.goto("/definitely-not-a-page");
 
     await expect(page.getByRole("heading", { name: "404" })).toBeVisible();
-    await expect(page.getByText("Diese Seite existiert nicht")).toBeVisible();
+    await expect(page.getByText("Denne side findes ikke")).toBeVisible();
     await expectNoCrash(page);
   });
 
@@ -56,18 +56,18 @@ test.describe("fresh visitor with a non-default browser language", () => {
     // the style preload and replace the settings page with an error screen.
     await page.goto("/settings?lang=zzz");
 
-    await expect(page.getByRole("heading", { name: "Einstellungen" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Spilopsætning" })).toBeVisible();
     await expectNoCrash(page);
   });
 
   test("starting a game reaches the wiki article page without crashing", async ({ page }) => {
     await page.goto("/settings");
 
-    await page.getByLabel("Startartikel auswählen").fill("Computer science");
+    await page.getByLabel("Vælg startartikel").fill("Computer science");
     await page.getByRole("option", { name: "Computer science", exact: true }).click();
-    await page.getByLabel("Endartikel auswählen").fill("Deep learning");
+    await page.getByLabel("Vælg slutartikel").fill("Deep learning");
     await page.getByRole("option", { name: "Deep learning", exact: true }).click();
-    await page.getByRole("button", { name: "Spielen", exact: true }).click();
+    await page.getByRole("button", { name: "Spil", exact: true }).click();
 
     await expect(page.getByRole("heading", { name: "Computer science" })).toBeVisible();
     await expectNoCrash(page);

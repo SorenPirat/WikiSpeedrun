@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { LANGUAGES } from "../components/Wiki/wikiLanguages";
 import type { WikiLanguage } from "../components/Wiki/Wiki.types";
-import { detectLocale, isLocale, type Locale, SOURCE_LOCALE } from "../locales/config";
+import { isLocale, type Locale, SOURCE_LOCALE } from "../locales/config";
 
 /*
  Data gets persisted in local storage
@@ -32,8 +32,8 @@ export interface SettingsValues {
 }
 
 const initialState: SettingsValues = {
-  interfaceLanguage: detectLocale(),
-  wikiLanguage: "en",
+  interfaceLanguage: "da",
+  wikiLanguage: "da",
   sidebarWidth: 400,
   is_CTRL_F_enabled: false,
   wikiArticleWidth: "standard",

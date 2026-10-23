@@ -4,7 +4,7 @@ import { detectLocale, SOURCE_LOCALE } from "../locales/config";
 
 const currentState: SettingsValues = {
   interfaceLanguage: detectLocale(),
-  wikiLanguage: "en",
+  wikiLanguage: "da",
   sidebarWidth: 400,
   is_CTRL_F_enabled: false,
   wikiArticleWidth: "standard",
@@ -31,7 +31,7 @@ test("invalid persisted settings fall back to defaults", () => {
   expect(resolved.sidebarWidth).toBe(400);
   expect(resolved.is_CTRL_F_enabled).toBe(false);
   expect(resolved.interfaceLanguage).toBe(SOURCE_LOCALE);
-  expect(resolved.wikiLanguage).toBe("en");
+  expect(resolved.wikiLanguage).toBe("da");
 });
 
 test("valid persisted settings survive rehydration", () => {
@@ -63,7 +63,7 @@ test("missing persisted fields keep current defaults", () => {
 test("an empty storage keeps the browser-detected language", () => {
   // Zustand's persist middleware calls merge even when the storage key is
   // absent; that undefined envelope must not overwrite defaults derived at
-  // startup (notably the browser-detected interface language).
+  // startup (notably the Danish interface default).
   const germanDefaults: SettingsValues = { ...currentState, interfaceLanguage: "de" };
 
   expect(resolvePersistedSettings(undefined, germanDefaults).interfaceLanguage).toBe("de");

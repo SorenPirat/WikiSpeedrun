@@ -1,0 +1,204 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: da\n"
+
+msgid "Something went wrong:"
+msgstr "Der opstod en fejl:"
+
+msgid "Clicks: {clicks}"
+msgstr "Klik: {clicks}"
+
+msgid "Article appearance"
+msgstr "Artikelvisning"
+
+msgid "Small"
+msgstr "Lille"
+
+msgid "Standard"
+msgstr "Standard"
+
+msgid "Large"
+msgstr "Stor"
+
+msgid "Compact"
+msgstr "Smal"
+
+msgid "Wide"
+msgstr "Bred"
+
+msgid "Text size"
+msgstr "Tekststørrelse"
+
+msgid "Content width"
+msgstr "Indholdsbredde"
+
+msgid "About"
+msgstr "Om spillet"
+
+msgid "Achievements"
+msgstr "Præstationer"
+
+msgid "Article"
+msgstr "Artikel"
+
+msgid "Article clicks"
+msgstr "Artikelklik"
+
+msgid "Article Preview"
+msgstr "Forhåndsvis artikel"
+
+msgid "Articles clicked:"
+msgstr "Klik på artikler:"
+
+msgid "Cheating attempts"
+msgstr "Snydeforsøg"
+
+msgid "Choose another link"
+msgstr "Vælg et andet link"
+
+msgid "Close"
+msgstr "Luk"
+
+msgid "Confirm action"
+msgstr "Bekræft handling"
+
+msgid "Copied to clipboard"
+msgstr "Kopieret til udklipsholderen"
+
+msgid "Couldn't load article preview"
+msgstr "Kunne ikke indlæse forhåndsvisningen"
+
+msgid "Dark theme support"
+msgstr "Understøtter mørkt tema"
+
+msgid "Enable search during gameplay"
+msgstr "Tillad søgning under spillet"
+
+msgid "Features"
+msgstr "Funktioner"
+
+msgid "Get random article"
+msgstr "Hent tilfældig artikel"
+
+msgid "Give up"
+msgstr "Giv op"
+
+msgid "History"
+msgstr "Historik"
+
+msgid "Language"
+msgstr "Sprog"
+
+msgid "Loading"
+msgstr "Indlæser"
+
+msgid "Menu"
+msgstr "Menu"
+
+msgid "Missed wins"
+msgstr "Oversprungne mål"
+
+msgid "Navigation"
+msgstr "Navigation"
+
+msgid "No articles found"
+msgstr "Ingen artikler fundet"
+
+msgid "No Cheating!"
+msgstr "Ingen snyd!"
+
+msgid "No registration required"
+msgstr "Ingen registrering nødvendig"
+
+msgid "Now supports multiple languages"
+msgstr "Understøtter flere sprog"
+
+msgid "Open source"
+msgstr "Open source"
+
+msgid "Play"
+msgstr "Spil"
+
+msgid "Play again"
+msgstr "Spil igen"
+
+msgid "Please wait"
+msgstr "Vent venligst"
+
+msgid "Previewed Articles:"
+msgstr "Forhåndsviste artikler:"
+
+msgid "Random choices:"
+msgstr "Tilfældige valg:"
+
+msgid "Random failed, try again"
+msgstr "Tilfældigt valg mislykkedes, prøv igen"
+
+msgid "Results"
+msgstr "Resultater"
+
+msgid "Select ending article"
+msgstr "Vælg slutartikel"
+
+msgid "Select starting article"
+msgstr "Vælg startartikel"
+
+msgid "Settings"
+msgstr "Spilopsætning"
+
+msgid "Share Result"
+msgstr "Del resultat"
+
+msgid "Share settings"
+msgstr "Del opsætning"
+
+msgid "Start typing to see options"
+msgstr "Skriv for at se muligheder"
+
+msgid "Statistics"
+msgstr "Statistik"
+
+msgid "Time"
+msgstr "Tid"
+
+msgid "Toggle theme"
+msgstr "Skift tema"
+
+msgid "Total games:"
+msgstr "Spil i alt:"
+
+msgid "The goal of the game is to navigate from a starting wikipedia article to another one, in the least amount of clicks and time"
+msgstr "Målet er at navigere fra én Wikipedia-artikel til en anden med så få klik og så kort tid som muligt."
+
+msgid "Wiki Speedrun Game"
+msgstr "Wiki Speedrun"
+
+msgid "Winning links"
+msgstr "Mållinks"
+
+msgid "Wins:"
+msgstr "Sejre:"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nej"
+
+msgid "High precision fair™ timer"
+msgstr "Præcis og fair™ tidtager"
+
+msgid "actually stops while you are loading the next article"
+msgstr "stopper under indlæsning af næste artikel"
+
+msgid "Keeps track of your session progress"
+msgstr "Holder styr på din fremgang"
+
+msgid "This page doesn't exist"
+msgstr "Denne side findes ikke"
+
+msgid "Start typing and then select values from the dropdown list or press the random button"
+msgstr "Skriv og vælg artikler fra listen, eller brug knappen til et tilfældigt valg"

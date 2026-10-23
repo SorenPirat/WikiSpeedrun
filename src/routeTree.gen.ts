@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AchievementsRouteImport } from './routes/achievements'
+import { Route as MultiplayerRouteImport } from './routes/multiplayer'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as StatsRouteImport } from './routes/stats'
 import { Route as WikiSplatRouteImport } from './routes/wiki/$'
@@ -29,6 +30,11 @@ const AboutRoute = AboutRouteImport.update({
 const AchievementsRoute = AchievementsRouteImport.update({
   id: '/achievements',
   path: '/achievements',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MultiplayerRoute = MultiplayerRouteImport.update({
+  id: '/multiplayer',
+  path: '/multiplayer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/achievements': typeof AchievementsRoute
+  '/multiplayer': typeof MultiplayerRoute
   '/settings': typeof SettingsRoute
   '/stats': typeof StatsRoute
   '/wiki/$': typeof WikiSplatRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/achievements': typeof AchievementsRoute
+  '/multiplayer': typeof MultiplayerRoute
   '/settings': typeof SettingsRoute
   '/stats': typeof StatsRoute
   '/wiki/$': typeof WikiSplatRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/achievements': typeof AchievementsRoute
+  '/multiplayer': typeof MultiplayerRoute
   '/settings': typeof SettingsRoute
   '/stats': typeof StatsRoute
   '/wiki/$': typeof WikiSplatRoute
@@ -75,14 +84,28 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/about' | '/achievements' | '/settings' | '/stats' | '/wiki/$'
+    | '/'
+    | '/about'
+    | '/achievements'
+    | '/multiplayer'
+    | '/settings'
+    | '/stats'
+    | '/wiki/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/achievements' | '/settings' | '/stats' | '/wiki/$'
+  to:
+    | '/'
+    | '/about'
+    | '/achievements'
+    | '/multiplayer'
+    | '/settings'
+    | '/stats'
+    | '/wiki/$'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/achievements'
+    | '/multiplayer'
     | '/settings'
     | '/stats'
     | '/wiki/$'
@@ -92,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AchievementsRoute: typeof AchievementsRoute
+  MultiplayerRoute: typeof MultiplayerRoute
   SettingsRoute: typeof SettingsRoute
   StatsRoute: typeof StatsRoute
   WikiSplatRoute: typeof WikiSplatRoute
@@ -118,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/achievements'
       fullPath: '/achievements'
       preLoaderRoute: typeof AchievementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/multiplayer': {
+      id: '/multiplayer'
+      path: '/multiplayer'
+      fullPath: '/multiplayer'
+      preLoaderRoute: typeof MultiplayerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -148,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AchievementsRoute: AchievementsRoute,
+  MultiplayerRoute: MultiplayerRoute,
   SettingsRoute: SettingsRoute,
   StatsRoute: StatsRoute,
   WikiSplatRoute: WikiSplatRoute,

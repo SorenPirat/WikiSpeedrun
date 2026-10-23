@@ -13,7 +13,6 @@ import {
 import { preloadWikipediaStyles } from "../components/Wiki/WikiStyles";
 import { useStopwatchActions } from "../components/StopwatchContext";
 import { LabelSwitch } from "../components/Switch";
-import { WikiLanguageSelect } from "../components/WikiLanguageSelect";
 import { useCheckAchievements } from "../hooks/useCheckAchievements";
 import { useResetGame } from "../hooks/useResetGame";
 import { useLingui } from "@lingui/react/macro";
@@ -95,7 +94,6 @@ const Settings = () => {
       </p>
 
       <form className="flex max-w-[650px] flex-col gap-4" onSubmit={startGameHandler}>
-        <WikiLanguageSelect />
         <RandomModal
           data={modalData}
           open={modalOpen}

@@ -3,7 +3,7 @@ import { HttpResponse, http } from "msw";
 import ChahkandukBirjand from "./wiki_pages/ChahkandukBirjand.json";
 
 export const handlers = [
-  http.get("https://en.wikipedia.org/w/api.php", ({ request }) => {
+  http.get("https://da.wikipedia.org/w/api.php", ({ request }) => {
     const url = new URL(request.url);
     const expectedParams: Record<string, string> = {
       action: "parse",
@@ -28,7 +28,7 @@ export const handlers = [
 
     return HttpResponse.json(ChahkandukBirjand);
   }),
-  http.get("https://en.wikipedia.org/w/load.php", () =>
+  http.get("https://da.wikipedia.org/w/load.php", () =>
     HttpResponse.text(
       ".mw-parser-output a { color: rgb(51, 102, 204); } body { color: rgb(255, 0, 0); }",
       {

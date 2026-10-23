@@ -4,7 +4,6 @@ import { GitHub, Moon, Sun } from "react-feather";
 import { useLingui } from "@lingui/react/macro";
 import { useIsGameRunning } from "../stores/GameStore";
 import { GiveUpModal } from "./ConfirmNavigation";
-import { InterfaceLanguageSelect } from "./InterfaceLanguageSelect";
 import { MobileMenu } from "./MobileMenu";
 import { ResultDialog } from "./ResultDialog";
 import { WikiPresentationMenu } from "./Wiki/WikiPresentationMenu";
@@ -19,9 +18,7 @@ const Header = () => {
 
   const links: WikiLink[] = [
     { name: t({ id: "Play" }), path: "/settings" },
-    { name: t({ id: "Statistics" }), path: "/stats" },
-    { name: t({ id: "Achievements" }), path: "/achievements" },
-    { name: t({ id: "About" }), path: "/about" },
+    { name: "Flerspiller", path: "/multiplayer" },
   ];
 
   const isGameRunning = useIsGameRunning();
@@ -39,7 +36,6 @@ const Header = () => {
         <MobileMenu links={links} />
         <ResultDialog />
         <ul className="ml-auto flex h-full shrink-0 gap-4">
-          <li className="h-full">{!isGameRunning && <InterfaceLanguageSelect />}</li>
           <li className="h-full">
             <WikiPresentationMenu />
           </li>

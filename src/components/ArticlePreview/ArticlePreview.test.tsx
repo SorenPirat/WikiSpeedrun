@@ -15,7 +15,7 @@ const RANDOM_PAGES = [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010
   }),
 );
 
-const wikiApiHandler = http.get("https://en.wikipedia.org/w/api.php", ({ request }) => {
+const wikiApiHandler = http.get("https://da.wikipedia.org/w/api.php", ({ request }) => {
   const url = new URL(request.url);
   if (url.searchParams.get("generator") === "random") {
     return HttpResponse.json({

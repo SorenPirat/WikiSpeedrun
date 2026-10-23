@@ -1,5 +1,5 @@
 import { getRouteApi, useBlocker, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLingui } from "@lingui/react/macro";
 import {
   useEndingArticle,
@@ -8,6 +8,8 @@ import {
   useStartingArticle,
 } from "../../stores/GameStore";
 import { useWikiLanguage } from "../../stores/SettingsStore";
+import { useClicks, useIsWin } from "../../stores/GameStore";
+import { getMultiplayerClient, isMultiplayerSessionActive } from "../../multiplayer/session";
 import { ModalContent, ModalDescription, ModalRoot, ModalTitle } from "../Modal";
 import { StartArrowEnd } from "../StartArrowEnd";
 import { Stopwatch } from "../Stopwatch";
@@ -22,6 +24,10 @@ const Wiki = () => {
   const endArticle = useEndingArticle();
   const navigate = useNavigate();
   const isGameRunning = useIsGameRunning();
+  const isWin = useIsWin();
+  const clicks = useClicks();
+  const finishReported = useRef(false);
+  const multiplayerClient = getMultiplayerClient();
   const { resetStoreState } = useGameStoreActions();
   const wikiLanguage = useWikiLanguage();
   const { status, proceed, reset, next } = useBlocker({
@@ -41,6 +47,16 @@ const Wiki = () => {
       void navigate({ to: "/settings" });
     }
   }, [endArticle, navigate, startArticle]);
+
+  useEffect(() => {
+    if (!isWin || !isGameRunning || !isMultiplayerSessionActive() || finishReported.current) return;
+    finishReported.current = true;
+    try {
+      multiplayerClient.finishGame(clicks);
+    } catch {
+      finishReported.current = false;
+    }
+  }, [clicks, isGameRunning, isWin, multiplayerClient]);
 
   const handleProceed = () => {
     if (next?.pathname && !next.pathname.startsWith("/wiki")) {

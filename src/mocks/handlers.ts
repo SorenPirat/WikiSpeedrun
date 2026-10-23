@@ -31,7 +31,7 @@ const getSelectArticleUrl = (article: string) =>
   `?action=query&list=search&origin=*&format=json&srsearch=${article}`;
 
 export const handlers = [
-  http.get("https://en.wikipedia.org/w/api.php", ({ request }) => {
+  http.get("https://da.wikipedia.org/w/api.php", ({ request }) => {
     const url = new URL(request.url);
 
     if (url.search === getSelectArticleUrl("abc")) {
@@ -83,7 +83,7 @@ export const handlers = [
 
     return passthrough();
   }),
-  http.get("https://en.wikipedia.org/w/load.php", () =>
+  http.get("https://da.wikipedia.org/w/load.php", () =>
     HttpResponse.text(".mw-parser-output a { color: rgb(51, 102, 204); }", {
       headers: { "Content-Type": "text/css; charset=utf-8" },
     }),

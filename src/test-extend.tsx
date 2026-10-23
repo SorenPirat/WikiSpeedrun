@@ -16,7 +16,7 @@ export const testWithMSW = testBase.extend({
       await testWorker.start({
         onUnhandledRequest(request, print) {
           const url = new URL(request.url);
-          if (url.origin !== "https://en.wikipedia.org" || url.pathname !== "/w/api.php") return;
+          if (!["https://en.wikipedia.org", "https://da.wikipedia.org"].includes(url.origin) || url.pathname !== "/w/api.php") return;
           print.warning();
         },
       });

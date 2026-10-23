@@ -8,7 +8,7 @@ import { findVisibleWinningLinks, getWikiArticleKey } from "./WikiDisplay.utils"
 import type { WikiArticleData, WikiArticleStyleState } from "./Wiki.types";
 
 const styleUrl =
-  "https://en.wikipedia.org/w/load.php?modules=skins.vector.styles&only=styles&skin=vector-2022&lang=en&debug=false";
+  "https://da.wikipedia.org/w/load.php?modules=skins.vector.styles&only=styles&skin=vector-2022&lang=da&debug=false";
 
 const article: WikiArticleData = {
   html: '<div class="mw-parser-output"><a href="/wiki/Other">Styled link</a></div>',
@@ -45,7 +45,7 @@ testWithMSW("isolates ResourceLoader CSS inside the article shadow root", async 
 });
 
 testWithMSW("shows readable degraded content when ResourceLoader styles fail", async () => {
-  testWorker.use(http.get("https://en.wikipedia.org/w/load.php", () => HttpResponse.error()));
+  testWorker.use(http.get("https://da.wikipedia.org/w/load.php", () => HttpResponse.error()));
   const onReady = vi.fn();
   const degradedArticle = {
     ...article,
@@ -110,7 +110,7 @@ testWithMSW("applies all article font sizes through Vector custom properties", a
 
 testWithMSW("reports readiness only after the final cascade hides winning links", async () => {
   testWorker.use(
-    http.get("https://en.wikipedia.org/w/load.php", () =>
+    http.get("https://da.wikipedia.org/w/load.php", () =>
       HttpResponse.text(".mw-parser-output a.hidden-link { display: none; }", {
         headers: { "Content-Type": "text/css; charset=utf-8" },
       }),
@@ -151,7 +151,7 @@ testWithMSW(
   async () => {
     const slowStyles = Promise.withResolvers<void>();
     testWorker.use(
-      http.get("https://en.wikipedia.org/w/load.php", async ({ request }) => {
+      http.get("https://da.wikipedia.org/w/load.php", async ({ request }) => {
         if (new URL(request.url).searchParams.get("lang") === "slow") {
           await slowStyles.promise;
         }
