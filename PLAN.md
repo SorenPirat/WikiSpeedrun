@@ -11,13 +11,13 @@ Status: **Ikke påbegyndt** eller **Færdig**.
    - Se `ARCHITECTURE.md`; central Node.js/WebSocket-server, genbrug af frontend og Wikipedia-kald, og serveren er autoritativ for rum, spilstart, tid, klik, status og rangliste.
 3. **Dansk og forenklet brugerflade** — Færdig
    - Dansk interface og `da.wikipedia.org` som fast standard; sprogvalg er skjult i hovedflowet.
-3a. **Deployment på Netlify + Render** — Ikke påbegyndt
+3a. **Deployment på Netlify + Render** — Færdig
    - Netlify deployer frontendens `dist`-mappe og håndterer SPA-rewrite til `index.html`.
    - Render kører Node/WebSocket-serveren med `PORT` og `ALLOWED_ORIGIN`.
    - Produktionsklienten bruger `VITE_MULTIPLAYER_WS_URL` med `wss://`.
    - Healthcheck, WebSocket-forbindelse og et test-rum skal fungere online.
 
-4. **Serverstyret spilstart, tidtagning og klikoptælling** — Ikke påbegyndt
+4. **Serverstyret spilstart, tidtagning og klikoptælling** — Færdig
 5. **Rum, deltagere og lærerfunktioner** — Færdig
 6. **Realtidsrangliste og statusvisning** — Færdig
 7. **Sikkerhed, dataminimering og driftssikkerhed** — Ikke påbegyndt

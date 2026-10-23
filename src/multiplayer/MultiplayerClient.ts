@@ -80,8 +80,12 @@ export class MultiplayerClient {
     this.send({ type: "start-game", teacherToken });
   }
 
-  finishGame(clicks: number) {
-    this.send({ type: "finish-game", clicks });
+  reportArticleClick(from: string, to: string) {
+    this.send({ type: "article-click", from, to });
+  }
+
+  finishGame() {
+    this.send({ type: "finish-game" });
   }
 
   setLeaderboardVisibility(teacherToken: string, visible: boolean) {

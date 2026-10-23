@@ -157,6 +157,7 @@ export const createRoomManager = () => {
       finished: false,
       elapsedMs: null,
       clicks: null,
+      currentArticle: null,
       client,
     };
     room.participants.set(participant.id, participant);
@@ -209,12 +210,39 @@ export const createRoomManager = () => {
       return;
     }
 
+    for (const participant of room.participants.values()) {
+      participant.currentArticle = room.settings.startingArticle;
+      participant.clicks = 0;
+      participant.finished = false;
+      participant.elapsedMs = null;
+    }
     room.status = "running";
     room.startedAt = Date.now();
     broadcastRoom(room);
   };
 
-  const handleFinishGame = (client, payload) => {
+  const handleArticleClick = (client, payload) => {
+    const room = rooms.get(client.roomCode);
+    const participant = room?.participants.get(client.participantId);
+    if (!room || client.role !== "participant" || !participant) {
+      sendError(client, "not_participant", "Kun elever kan sende artikelklik.");
+      return;
+    }
+    if (room.status !== "running") {
+      sendError(client, "game_not_running", "Spillet er ikke startet.");
+      return;
+    }
+    const from = typeof payload.from === "string" ? payload.from.trim() : "";
+    const to = typeof payload.to === "string" ? payload.to.trim() : "";
+    if (!from || !to || from.length > 200 || to.length > 200 || from !== participant.currentArticle) {
+      sendError(client, "invalid_article_sequence", "Artikelrækkefølgen er ugyldig.");
+      return;
+    }
+    participant.currentArticle = to;
+    participant.clicks += 1;
+    broadcastRoom(room);
+  };
+  const handleFinishGame = (client) => {
     const room = rooms.get(client.roomCode);
     const participant = room?.participants.get(client.participantId);
     if (!room || client.role !== "participant" || !participant) {
@@ -225,17 +253,13 @@ export const createRoomManager = () => {
       sendError(client, "game_not_running", "Spillet er ikke startet.");
       return;
     }
-    if (participant.finished) return;
-
-    const clicks = Number.isInteger(payload.clicks) && payload.clicks >= 0 ? payload.clicks : undefined;
-    if (clicks === undefined || clicks > 10000) {
-      sendError(client, "invalid_clicks", "Antallet af klik er ugyldigt.");
+    if (participant.currentArticle !== room.settings.endingArticle) {
+      sendError(client, "ending_article_not_reached", "Slutartiklen er ikke nået endnu.");
       return;
     }
-
+    if (participant.finished) return;
     participant.finished = true;
     participant.elapsedMs = Math.max(0, Date.now() - room.startedAt);
-    participant.clicks = clicks;
     broadcastRoom(room);
   };
 
@@ -268,8 +292,12 @@ export const createRoomManager = () => {
       handleStartGame(client, payload);
       return;
     }
+    if (payload.type === "article-click") {
+      handleArticleClick(client, payload);
+      return;
+    }
     if (payload.type === "finish-game") {
-      handleFinishGame(client, payload);
+      handleFinishGame(client);
       return;
     }
     if (payload.type === "set-leaderboard-visibility") {

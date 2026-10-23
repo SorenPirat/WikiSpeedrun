@@ -22,6 +22,9 @@
 - Elever kan nu genforbinde efter spilstart med deres deltager-token.
 - WebSocket-serveren afviser beskeder over 64 KB.
 - Netlify- og Render-konfigurationer er tilføjet som `netlify.toml`, `render.yaml` og `.env.example`.
+- Serveren validerer nu artikelrækkefølge og tæller hvert multiplayer-klik selv.
+- Serveren kræver nu, at slutartiklen er nået, før en elev kan afslutte spillet.
+- Netlify-frontend og Render-WebSocket-server er deployet og testet med lærer- og elevforbindelse.
 - Artikelvælgerne genbruger eksisterende Wikipedia-autocomplete på dansk.
 
 ## Fungerer
@@ -35,11 +38,11 @@
 
 ## Kendte problemer
 
-- Den centrale server, spilstart, serverstyret gennemførelsestid og ranglisteprototype findes; serveren validerer endnu ikke hvert enkelt Wikipedia-link som et klik.
-- Netlify- og Render-deployment er endnu ikke konfigureret.
+- Serveren validerer artikelrækkefølge og slutartikel, men kontrollerer endnu ikke, om hvert rapporteret link faktisk findes på Wikipedia-artiklen.
+- Netlify- og Render-deployment fungerer; produktionsmiljøet bruger `VITE_MULTIPLAYER_WS_URL` og `ALLOWED_ORIGIN`.
 - Multiplayer-gennemførelsestid og resultater er serverstyrede; den eksisterende singleplayer-tid er fortsat lokal.
 - Interface og Wikipedia-standard er nu dansk; fuld oversættelse af ældre sekundære tekster fortsætter løbende.
 
 ## Næste opgave
 
-- Opret Netlify- og Render-services ud fra konfigurationerne og test healthcheck/WebSocket online.
+- Gennemgå sikkerhed, dataminimering og driftssikkerhed for Netlify/Render.

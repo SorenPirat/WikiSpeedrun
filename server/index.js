@@ -106,6 +106,10 @@ export const createMultiplayerServer = ({ allowedOrigin = "" } = {}) => {
 export const startServer = async () => {
   const port = Number(process.env.PORT ?? DEFAULT_PORT);
   const allowedOrigin = process.env.ALLOWED_ORIGIN?.trim() ?? "";
+  const requireAllowedOrigin = process.env.REQUIRE_ALLOWED_ORIGIN === "true";
+  if (requireAllowedOrigin && !allowedOrigin) {
+    throw new Error("ALLOWED_ORIGIN skal være sat, når REQUIRE_ALLOWED_ORIGIN=true.");
+  }
   const multiplayerServer = createMultiplayerServer({ allowedOrigin });
 
   await multiplayerServer.listen(port);

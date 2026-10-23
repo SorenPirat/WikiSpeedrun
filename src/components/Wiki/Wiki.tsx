@@ -5,10 +5,10 @@ import {
   useEndingArticle,
   useGameStoreActions,
   useIsGameRunning,
+  useIsWin,
   useStartingArticle,
 } from "../../stores/GameStore";
 import { useWikiLanguage } from "../../stores/SettingsStore";
-import { useClicks, useIsWin } from "../../stores/GameStore";
 import { getMultiplayerClient, isMultiplayerSessionActive } from "../../multiplayer/session";
 import { ModalContent, ModalDescription, ModalRoot, ModalTitle } from "../Modal";
 import { StartArrowEnd } from "../StartArrowEnd";
@@ -25,7 +25,6 @@ const Wiki = () => {
   const navigate = useNavigate();
   const isGameRunning = useIsGameRunning();
   const isWin = useIsWin();
-  const clicks = useClicks();
   const finishReported = useRef(false);
   const multiplayerClient = getMultiplayerClient();
   const { resetStoreState } = useGameStoreActions();
@@ -52,11 +51,11 @@ const Wiki = () => {
     if (!isWin || !isGameRunning || !isMultiplayerSessionActive() || finishReported.current) return;
     finishReported.current = true;
     try {
-      multiplayerClient.finishGame(clicks);
+      multiplayerClient.finishGame();
     } catch {
       finishReported.current = false;
     }
-  }, [clicks, isGameRunning, isWin, multiplayerClient]);
+  }, [isGameRunning, isWin, multiplayerClient]);
 
   const handleProceed = () => {
     if (next?.pathname && !next.pathname.startsWith("/wiki")) {

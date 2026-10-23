@@ -56,6 +56,7 @@ små hændelser til alle i rummet.
 
 - Netlify leverer HTTPS til frontend, og Render leverer HTTPS/WSS til multiplayer-serveren.
 - Frontendens tilladte Netlify-origin konfigureres på WebSocket-serveren.
+- Render-serveren kræver ALLOWED_ORIGIN, når REQUIRE_ALLOWED_ORIGIN=true, og starter ikke uden den.
 - Rumkoder og tokens genereres kryptografisk tilfældigt.
 - Input, payload-størrelser og hændelsesfrekvens begrænses.
 - Inaktive rum udløber automatisk.

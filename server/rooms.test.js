@@ -5,8 +5,16 @@ import { createMultiplayerServer } from "./index.js";
 
 const nextMessage = (client) =>
   new Promise((resolve, reject) => {
-    client.once("message", (data) => resolve(JSON.parse(data.toString())));
-    client.once("error", reject);
+    const onError = (error) => {
+      client.off("message", onMessage);
+      reject(error);
+    };
+    const onMessage = (data) => {
+      client.off("error", onError);
+      resolve(JSON.parse(data.toString()));
+    };
+    client.once("message", onMessage);
+    client.once("error", onError);
   });
 
 const listenForTest = async () => {
@@ -145,13 +153,55 @@ test("calculates a participant's elapsed time on the server", async () => {
     await nextMessage(teacher);
     await nextMessage(student);
 
-    student.send(JSON.stringify({ type: "finish-game", clicks: 7 }));
+    for (let click = 0; click < 7; click += 1) {
+      student.send(JSON.stringify({ type: "article-click", from: click === 0 ? "Danmark" : `Artikel ${click}`, to: click === 6 ? "Europa" : `Artikel ${click + 1}` }));
+      await nextMessage(teacher);
+    }
+    student.send(JSON.stringify({ type: "finish-game" }));
     const finished = await nextMessage(teacher);
     const participant = finished.room.participants[0];
     assert.equal(participant.finished, true);
     assert.equal(participant.clicks, 7);
     assert.equal(typeof participant.elapsedMs, "number");
     assert.ok(participant.elapsedMs >= 0);
+  } finally {
+    teacher.close();
+    student.close();
+    await server.close();
+  }
+});
+
+test("afslutter ikke spillet før slutartiklen er nået", async () => {
+  const { server, port } = await listenForTest();
+  const teacher = new WebSocket(`ws://127.0.0.1:${port}/ws`);
+  const student = new WebSocket(`ws://127.0.0.1:${port}/ws`);
+
+  try {
+    await nextMessage(teacher);
+    await nextMessage(student);
+    teacher.send(JSON.stringify({ type: "create-room" }));
+    const created = await nextMessage(teacher);
+    student.send(JSON.stringify({ type: "join-room", roomCode: created.roomCode, nickname: "Anna" }));
+    await nextMessage(student);
+    await nextMessage(teacher);
+    teacher.send(JSON.stringify({ type: "set-game-settings", teacherToken: created.teacherToken, startingArticle: "Danmark", endingArticle: "Europa" }));
+    await nextMessage(teacher);
+    await nextMessage(student);
+    teacher.send(JSON.stringify({ type: "start-game", teacherToken: created.teacherToken }));
+    await nextMessage(teacher);
+    await nextMessage(student);
+
+    student.send(JSON.stringify({ type: "finish-game" }));
+    const denied = await nextMessage(student);
+    assert.equal(denied.type, "error");
+    assert.equal(denied.code, "ending_article_not_reached");
+
+    student.send(JSON.stringify({ type: "article-click", from: "Danmark", to: "Europa" }));
+    await nextMessage(teacher);
+    student.send(JSON.stringify({ type: "finish-game" }));
+    const finished = await nextMessage(teacher);
+    assert.equal(finished.room.participants[0].finished, true);
+    assert.equal(finished.room.participants[0].clicks, 1);
   } finally {
     teacher.close();
     student.close();

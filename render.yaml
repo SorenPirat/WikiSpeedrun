@@ -9,3 +9,5 @@ services:
     envVars:
       - key: ALLOWED_ORIGIN
         sync: false
+      - key: REQUIRE_ALLOWED_ORIGIN
+        value: "true"

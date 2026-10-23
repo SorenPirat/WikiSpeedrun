@@ -1,7 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
 import type { KeyboardEvent, MouseEvent } from "react";
 import { useLingui } from "@lingui/react/macro";
-import { useGameStoreActions } from "../../stores/GameStore";
+import { useGameStoreActions, useHistory } from "../../stores/GameStore";
+import { getMultiplayerClient, isMultiplayerSessionActive } from "../../multiplayer/session";
 import { useWikiLanguage } from "../../stores/SettingsStore";
 import { errorToast } from "../../utils/toast";
 import { useStopwatchActions } from "../StopwatchContext";
@@ -28,6 +29,8 @@ const useWikiLogic = () => {
   const invalidLinkText = t({ id: "Choose another link" });
   const { getFormattedTime } = useStopwatchActions();
   const { addHistoryArticle } = useGameStoreActions();
+  const history = useHistory();
+  const multiplayerClient = getMultiplayerClient();
 
   const addHrefToHistory = (href: string) => {
     const time = getFormattedTime();
@@ -69,6 +72,11 @@ const useWikiLogic = () => {
     // handle correct link
     if (hrefText) {
       addHrefToHistory(hrefText);
+      if (isMultiplayerSessionActive()) {
+        const currentArticle = history.at(-1)?.title;
+        const targetArticle = hrefToText(hrefText);
+        if (currentArticle) multiplayerClient.reportArticleClick(currentArticle, targetArticle);
+      }
       /**
        * encodeURIComponent is needed because articles with slashes break
        * TODO rewrite to query params instead of path segments??
