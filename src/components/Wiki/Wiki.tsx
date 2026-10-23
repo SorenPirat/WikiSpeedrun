@@ -1,4 +1,5 @@
 import { getRouteApi, useBlocker, useNavigate } from "@tanstack/react-router";
+import { useStopwatchActions } from "../StopwatchContext";
 import { useEffect, useRef } from "react";
 import { useLingui } from "@lingui/react/macro";
 import {
@@ -27,7 +28,8 @@ const Wiki = () => {
   const isWin = useIsWin();
   const finishReported = useRef(false);
   const multiplayerClient = getMultiplayerClient();
-  const { resetStoreState } = useGameStoreActions();
+  const { addHistoryArticle, resetStoreState, setEndingArticle, setIsGameRunning, setStartingArticle } = useGameStoreActions();
+  const { resetStopwatch, startStopwatch } = useStopwatchActions();
   const wikiLanguage = useWikiLanguage();
   const { status, proceed, reset, next } = useBlocker({
     shouldBlockFn: ({ next: target }) => {
@@ -48,14 +50,42 @@ const Wiki = () => {
   }, [endArticle, navigate, startArticle]);
 
   useEffect(() => {
-    if (!isWin || !isGameRunning || !isMultiplayerSessionActive() || finishReported.current) return;
+    if (!isWin || !isMultiplayerSessionActive() || finishReported.current) return;
     finishReported.current = true;
     try {
       multiplayerClient.finishGame();
     } catch {
       finishReported.current = false;
     }
-  }, [isGameRunning, isWin, multiplayerClient]);
+  }, [isWin, multiplayerClient]);
+
+  useEffect(() => {
+    if (!isMultiplayerSessionActive()) return;
+    const unsubscribe = multiplayerClient.onMessage((message) => {
+      if (message.type !== "room-state" && message.type !== "room-joined") return;
+      if (message.room.status !== "running") {
+        setIsGameRunning(false);
+        return;
+      }
+      finishReported.current = false;
+      resetStopwatch();
+      resetStoreState();
+      setStartingArticle({ pageid: "", title: message.room.settings.startingArticle });
+      setEndingArticle({ pageid: "", title: message.room.settings.endingArticle });
+      addHistoryArticle({
+        title: message.room.settings.startingArticle,
+        time: { min: "00", sec: "00", ms: "000" },
+        winningLinks: 0,
+      });
+      setIsGameRunning(true);
+      startStopwatch();
+      void navigate({ to: `/wiki/${encodeURIComponent(message.room.settings.startingArticle)}` });
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [addHistoryArticle, multiplayerClient, navigate, resetStopwatch, resetStoreState, setEndingArticle, setIsGameRunning, setStartingArticle, startStopwatch]);
+
 
   const handleProceed = () => {
     if (next?.pathname && !next.pathname.startsWith("/wiki")) {
