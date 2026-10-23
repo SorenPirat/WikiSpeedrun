@@ -1,6 +1,6 @@
 import { getRouteApi, useBlocker, useNavigate } from "@tanstack/react-router";
 import { useStopwatchActions } from "../StopwatchContext";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLingui } from "@lingui/react/macro";
 import {
   useEndingArticle,
@@ -11,6 +11,7 @@ import {
 } from "../../stores/GameStore";
 import { useWikiLanguage } from "../../stores/SettingsStore";
 import { getMultiplayerClient, getMultiplayerStartedAt, isMultiplayerSessionActive, setMultiplayerStartedAt } from "../../multiplayer/session";
+import type { MultiplayerRoom } from "../../multiplayer/MultiplayerClient";
 import { ModalContent, ModalDescription, ModalRoot, ModalTitle } from "../Modal";
 import { StartArrowEnd } from "../StartArrowEnd";
 import { Stopwatch } from "../Stopwatch";
@@ -27,6 +28,7 @@ const Wiki = () => {
   const isGameRunning = useIsGameRunning();
   const isWin = useIsWin();
   const finishReported = useRef(false);
+  const [multiplayerRoom, setMultiplayerRoom] = useState<MultiplayerRoom>();
   const multiplayerClient = getMultiplayerClient();
   const { addHistoryArticle, resetStoreState, setEndingArticle, setIsGameRunning, setStartingArticle } = useGameStoreActions();
   const { resetStopwatch, startStopwatch } = useStopwatchActions();
@@ -63,6 +65,7 @@ const Wiki = () => {
     if (!isMultiplayerSessionActive()) return;
     const unsubscribe = multiplayerClient.onMessage((message) => {
       if (message.type !== "room-state" && message.type !== "room-joined") return;
+      setMultiplayerRoom(message.room);
       if (message.room.status !== "running") {
         setIsGameRunning(false);
         if (message.room.status === "waiting") setMultiplayerStartedAt(null);
@@ -107,6 +110,8 @@ const Wiki = () => {
         </div>
         <WikiDisplay />
 
+        {multiplayerRoom?.settings.leaderboardVisible && <MultiplayerLeaderboard room={multiplayerRoom} />}
+
         <div className="pointer-events-none absolute right-0 bottom-0 hidden overflow-hidden p-2 sm:flex">
           <div className="absolute inset-0 bg-black/80" />
           <Stopwatch />
@@ -120,6 +125,22 @@ const Wiki = () => {
     </>
   );
 };
+
+function MultiplayerLeaderboard({ room }: { room: MultiplayerRoom }) {
+  const finished = room.participants
+    .filter((participant) => participant.finished && participant.elapsedMs !== null)
+    .toSorted((a, b) => (a.elapsedMs ?? Infinity) - (b.elapsedMs ?? Infinity))
+    .slice(0, 3);
+  if (finished.length === 0) return null;
+  return (
+    <section className="mt-4 rounded border border-secondary-border bg-neutral-50 p-4 dark:bg-dark-surface" aria-live="polite">
+      <h2 className="text-xl font-semibold">Rangliste</h2>
+      {finished.map((participant, index) => (
+        <p key={participant.id}>{index + 1}. {participant.nickname} – {((participant.elapsedMs ?? 0) / 1000).toFixed(2)} sekunder ({participant.clicks} klik)</p>
+      ))}
+    </section>
+  );
+}
 
 function WikiNavigationBlockModal({
   open,

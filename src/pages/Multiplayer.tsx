@@ -5,7 +5,7 @@ import { useStopwatchActions } from "../components/StopwatchContext";
 import ArticleAutocomplete from "../components/ArticleAutocomplete/ArticleAutocomplete";
 import type { Article } from "../stores/GameStore";
 import { useGameStoreActions } from "../stores/GameStore";
-import { activateMultiplayerSession, getMultiplayerClient, setMultiplayerStartedAt } from "../multiplayer/session";
+import { activateMultiplayerSession, clearSavedParticipantSession, getMultiplayerClient, getSavedParticipantSession, saveParticipantSession, setMultiplayerStartedAt } from "../multiplayer/session";
 import type { MultiplayerMessage, MultiplayerRoom } from "../multiplayer/MultiplayerClient";
 const getParticipantStatus = (roomStatus: MultiplayerRoom["status"], connected: boolean, finished: boolean) => {
   if (finished) return "Færdig";
@@ -55,6 +55,9 @@ const Multiplayer = () => {
         if (message.room.status === "running") setMultiplayerStartedAt(message.room.startedAt);
         if (message.room.status === "waiting") setMultiplayerStartedAt(null);
       } else if (message.type === "room-joined" || message.type === "room-state") {
+        if (message.type === "room-joined") {
+          saveParticipantSession({ roomCode: message.room.roomCode, nickname, participantToken: message.participantToken });
+        }
         setStartingArticle(message.room.settings.startingArticle);
         setEndingArticle(message.room.settings.endingArticle);
         setLeaderboardVisible(message.room.settings.leaderboardVisible);
@@ -80,10 +83,19 @@ const Multiplayer = () => {
           void navigate({ to: `/wiki/${encodeURIComponent(message.room.settings.startingArticle)}` });
         }
       } else if (message.type === "error") {
+        if (message.code === "room_not_found" || message.code === "invalid_participant_token") clearSavedParticipantSession();
         setError(message.message);
       }
     });
-    client.connect().then(() => setConnected(true)).catch((connectionError: Error) => setError(connectionError.message));
+    const savedSession = role === "participant" ? getSavedParticipantSession() : undefined;
+    if (savedSession) {
+      setRoomCode(savedSession.roomCode);
+      setNickname(savedSession.nickname);
+    }
+    client.connect().then(() => {
+      setConnected(true);
+      if (savedSession) client.joinRoom(savedSession.roomCode, savedSession.nickname, savedSession.participantToken);
+    }).catch((connectionError: Error) => setError(connectionError.message));
     return () => {
       unsubscribe();
     };
@@ -155,7 +167,7 @@ const Multiplayer = () => {
               />
               <button type="button" className="w-fit border border-secondary-border px-6 py-3 hover:bg-secondary-blue disabled:opacity-50" onClick={() => client.resetGame(teacherToken)} disabled={room.status !== "finished"}>Nyt spil</button>
               <button type="submit" className="w-fit bg-secondary-blue px-6 py-3 hover:bg-primary-blue">Gem artikler</button>
-              <button type="button" className="w-fit bg-primary-blue px-6 py-3 hover:bg-secondary-blue disabled:opacity-50" onClick={() => client.startGame(teacherToken)} disabled={room.status !== "waiting" || !startingArticle || !endingArticle}>Start spillet</button>
+              <button type="button" className="w-fit bg-primary-blue px-6 py-3 hover:bg-secondary-blue disabled:opacity-50" onClick={() => { client.setGameSettings(teacherToken, startingArticle, endingArticle); client.startGame(teacherToken); }} disabled={room.status !== "waiting" || !startingArticle || !endingArticle}>Start spillet</button>
               <button type="button" className="w-fit border border-red-700 px-6 py-3 text-red-700 hover:bg-red-50 disabled:opacity-50" onClick={() => client.stopGame(teacherToken)} disabled={room.status !== "running"}>Stop spillet</button>
               <label className="flex items-center gap-2">
                 <input type="checkbox" checked={leaderboardVisible} onChange={(event) => { setLeaderboardVisible(event.target.checked); client.setLeaderboardVisibility(teacherToken, event.target.checked); }} />
