@@ -5,7 +5,7 @@ import { useStopwatchActions } from "../components/StopwatchContext";
 import ArticleAutocomplete from "../components/ArticleAutocomplete/ArticleAutocomplete";
 import type { Article } from "../stores/GameStore";
 import { useGameStoreActions } from "../stores/GameStore";
-import { activateMultiplayerSession, getMultiplayerClient } from "../multiplayer/session";
+import { activateMultiplayerSession, getMultiplayerClient, setMultiplayerStartedAt } from "../multiplayer/session";
 import type { MultiplayerMessage, MultiplayerRoom } from "../multiplayer/MultiplayerClient";
 const getParticipantStatus = (roomStatus: MultiplayerRoom["status"], connected: boolean, finished: boolean) => {
   if (finished) return "Færdig";
@@ -52,11 +52,15 @@ const Multiplayer = () => {
         setEndingArticle(message.room.settings.endingArticle);
         setLeaderboardVisible(message.room.settings.leaderboardVisible);
         setRoom(message.room);
+        if (message.room.status === "running") setMultiplayerStartedAt(message.room.startedAt);
+        if (message.room.status === "waiting") setMultiplayerStartedAt(null);
       } else if (message.type === "room-joined" || message.type === "room-state") {
         setStartingArticle(message.room.settings.startingArticle);
         setEndingArticle(message.room.settings.endingArticle);
         setLeaderboardVisible(message.room.settings.leaderboardVisible);
         setRoom(message.room);
+        if (message.room.status === "running") setMultiplayerStartedAt(message.room.startedAt);
+        if (message.room.status === "waiting") setMultiplayerStartedAt(null);
         if (message.room.status !== "running" && role === "participant") {
           setIsGameRunning(false);
         }

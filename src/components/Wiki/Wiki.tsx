@@ -10,7 +10,7 @@ import {
   useStartingArticle,
 } from "../../stores/GameStore";
 import { useWikiLanguage } from "../../stores/SettingsStore";
-import { getMultiplayerClient, isMultiplayerSessionActive } from "../../multiplayer/session";
+import { getMultiplayerClient, getMultiplayerStartedAt, isMultiplayerSessionActive, setMultiplayerStartedAt } from "../../multiplayer/session";
 import { ModalContent, ModalDescription, ModalRoot, ModalTitle } from "../Modal";
 import { StartArrowEnd } from "../StartArrowEnd";
 import { Stopwatch } from "../Stopwatch";
@@ -65,9 +65,11 @@ const Wiki = () => {
       if (message.type !== "room-state" && message.type !== "room-joined") return;
       if (message.room.status !== "running") {
         setIsGameRunning(false);
+        if (message.room.status === "waiting") setMultiplayerStartedAt(null);
         return;
       }
-      if (isGameRunning) return;
+      if (getMultiplayerStartedAt() === message.room.startedAt) return;
+      setMultiplayerStartedAt(message.room.startedAt);
       finishReported.current = false;
       resetStopwatch();
       resetStoreState();
