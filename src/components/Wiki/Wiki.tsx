@@ -67,6 +67,7 @@ const Wiki = () => {
         setIsGameRunning(false);
         return;
       }
+      if (isGameRunning) return;
       finishReported.current = false;
       resetStopwatch();
       resetStoreState();
@@ -84,7 +85,7 @@ const Wiki = () => {
     return () => {
       unsubscribe();
     };
-  }, [addHistoryArticle, multiplayerClient, navigate, resetStopwatch, resetStoreState, setEndingArticle, setIsGameRunning, setStartingArticle, startStopwatch]);
+  }, [addHistoryArticle, isGameRunning, multiplayerClient, navigate, resetStopwatch, resetStoreState, setEndingArticle, setIsGameRunning, setStartingArticle, startStopwatch]);
 
 
   const handleProceed = () => {
