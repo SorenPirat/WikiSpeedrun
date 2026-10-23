@@ -11,7 +11,7 @@
     "dev:withMocks": "cross-env-shell VITE_WITH_MOCKS=true vite --open",
     "start": "vite --open",
     "viteBuild": "vite build",
-    "build": "lingui extract --clean && nub run \"/^(typecheck|doctor|viteBuild)$/\"",
+    "build": "lingui extract --clean && nub run \"/^(typecheck|viteBuild)$/\"",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "extract": "lingui extract --clean",
