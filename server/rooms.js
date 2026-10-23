@@ -1,6 +1,8 @@
 import { randomBytes, randomInt, randomUUID } from "node:crypto";
 
 const MAX_PARTICIPANTS = 50;
+const DEFAULT_ROOM_IDLE_TIMEOUT_MS = 30 * 60 * 1000;
+const DEFAULT_CLEANUP_INTERVAL_MS = 60 * 1000;
 const ROOM_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
 const send = (client, message) => {
@@ -24,12 +26,13 @@ const publicRoom = (room) => ({
   status: room.status,
   startedAt: room.startedAt,
   settings: room.settings,
-  participants: [...room.participants.values()].map(({ id, nickname, connected, finished, elapsedMs, clicks }) => ({
+  participants: [...room.participants.values()].map(({ id, nickname, connected, finished, elapsedMs, completedAt, clicks }) => ({
     id,
     nickname,
     connected,
     finished,
     elapsedMs,
+    completedAt,
     clicks,
   })),
 });
@@ -38,8 +41,25 @@ const sendError = (client, code, message) => {
   send(client, { type: "error", code, message });
 };
 
-export const createRoomManager = () => {
+export const createRoomManager = ({ roomIdleTimeoutMs = DEFAULT_ROOM_IDLE_TIMEOUT_MS, cleanupIntervalMs = DEFAULT_CLEANUP_INTERVAL_MS } = {}) => {
   const rooms = new Map();
+
+  const touchRoom = (room) => {
+    room.lastActivityAt = Date.now();
+  };
+
+  const cleanupRooms = () => {
+    const now = Date.now();
+    for (const [roomCode, room] of rooms) {
+      const hasConnectedClients = Boolean(room.teacherClient) || [...room.participants.values()].some((participant) => participant.client);
+      if (!hasConnectedClients && now - room.lastActivityAt >= roomIdleTimeoutMs) {
+        rooms.delete(roomCode);
+      }
+    }
+  };
+
+  const cleanupTimer = setInterval(cleanupRooms, cleanupIntervalMs);
+  cleanupTimer.unref();
 
   const broadcastRoom = (room) => {
     const message = { type: "room-state", room: publicRoom(room) };
@@ -60,6 +80,7 @@ export const createRoomManager = () => {
       roomCode,
       status: "waiting",
       startedAt: null,
+      lastActivityAt: Date.now(),
       settings: { startingArticle: "", endingArticle: "", leaderboardVisible: true },
       teacherToken: createToken(),
       teacherClient: client,
@@ -156,6 +177,7 @@ export const createRoomManager = () => {
       connected: true,
       finished: false,
       elapsedMs: null,
+      completedAt: null,
       clicks: null,
       currentArticle: null,
       client,
@@ -215,9 +237,55 @@ export const createRoomManager = () => {
       participant.clicks = 0;
       participant.finished = false;
       participant.elapsedMs = null;
+      participant.completedAt = null;
     }
     room.status = "running";
     room.startedAt = Date.now();
+    broadcastRoom(room);
+  };
+
+  const handleResetGame = (client, payload) => {
+    const room = rooms.get(client.roomCode);
+    if (!room || client.role !== "teacher") {
+      sendError(client, "not_teacher", "Kun læreren kan starte et nyt spil.");
+      return;
+    }
+    if (payload.teacherToken !== room.teacherToken) {
+      sendError(client, "invalid_teacher_token", "Lærertoken er ugyldigt.");
+      return;
+    }
+    if (room.status !== "finished") {
+      sendError(client, "game_not_finished", "Det nuværende spil skal stoppes først.");
+      return;
+    }
+    room.status = "waiting";
+    room.startedAt = null;
+    room.settings = { ...room.settings, startingArticle: "", endingArticle: "" };
+    for (const participant of room.participants.values()) {
+      participant.currentArticle = null;
+      participant.finished = false;
+      participant.elapsedMs = null;
+      participant.completedAt = null;
+      participant.clicks = null;
+    }
+    broadcastRoom(room);
+  };
+
+  const handleStopGame = (client, payload) => {
+    const room = rooms.get(client.roomCode);
+    if (!room || client.role !== "teacher") {
+      sendError(client, "not_teacher", "Kun læreren kan stoppe spillet.");
+      return;
+    }
+    if (payload.teacherToken !== room.teacherToken) {
+      sendError(client, "invalid_teacher_token", "Lærertoken er ugyldigt.");
+      return;
+    }
+    if (room.status !== "running") {
+      sendError(client, "game_not_running", "Spillet er ikke i gang.");
+      return;
+    }
+    room.status = "finished";
     broadcastRoom(room);
   };
 
@@ -260,6 +328,7 @@ export const createRoomManager = () => {
     if (participant.finished) return;
     participant.finished = true;
     participant.elapsedMs = Math.max(0, Date.now() - room.startedAt);
+    participant.completedAt = Date.now();
     broadcastRoom(room);
   };
 
@@ -276,6 +345,8 @@ export const createRoomManager = () => {
       sendError(client, "invalid_message", "Beskeden mangler en type.");
       return;
     }
+    const room = rooms.get(client.roomCode);
+    if (room) touchRoom(room);
     if (payload.type === "create-room") {
       handleCreateRoom(client);
       return;
@@ -290,6 +361,14 @@ export const createRoomManager = () => {
     }
     if (payload.type === "start-game") {
       handleStartGame(client, payload);
+      return;
+    }
+    if (payload.type === "reset-game") {
+      handleResetGame(client, payload);
+      return;
+    }
+    if (payload.type === "stop-game") {
+      handleStopGame(client, payload);
       return;
     }
     if (payload.type === "article-click") {
@@ -325,5 +404,7 @@ export const createRoomManager = () => {
     broadcastRoom(room);
   };
 
-  return { handleMessage, handleDisconnect };
+  const close = () => clearInterval(cleanupTimer);
+
+  return { handleMessage, handleDisconnect, close };
 };

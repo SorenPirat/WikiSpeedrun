@@ -17,13 +17,35 @@ const nextMessage = (client) =>
     client.once("error", onError);
   });
 
-const listenForTest = async () => {
-  const server = createMultiplayerServer();
+const listenForTest = async (options = {}) => {
+  const server = createMultiplayerServer(options);
   const address = await server.listen(0);
   assert.ok(address && typeof address === "object");
   return { server, port: address.port };
 };
 
+test("fjerner et inaktivt rum efter alle forbindelser er lukket", async () => {
+  const { server, port } = await listenForTest({ roomIdleTimeoutMs: 10, cleanupIntervalMs: 5 });
+  const teacher = new WebSocket("ws://127.0.0.1:" + port + "/ws");
+
+  try {
+    await nextMessage(teacher);
+    teacher.send(JSON.stringify({ type: "create-room" }));
+    const created = await nextMessage(teacher);
+    teacher.close();
+    await new Promise((resolve) => teacher.once("close", resolve));
+    await new Promise((resolve) => setTimeout(resolve, 30));
+
+    const client = new WebSocket("ws://127.0.0.1:" + port + "/ws");
+    await nextMessage(client);
+    client.send(JSON.stringify({ type: "join-room", roomCode: created.roomCode, nickname: "Anna" }));
+    const response = await nextMessage(client);
+    assert.equal(response.code, "room_not_found");
+    client.close();
+  } finally {
+    await server.close();
+  }
+});
 test("creates a room and lets a participant join with a token", async () => {
   const { server, port } = await listenForTest();
   const teacher = new WebSocket(`ws://127.0.0.1:${port}/ws`);
@@ -163,6 +185,7 @@ test("calculates a participant's elapsed time on the server", async () => {
     assert.equal(participant.finished, true);
     assert.equal(participant.clicks, 7);
     assert.equal(typeof participant.elapsedMs, "number");
+    assert.equal(typeof participant.completedAt, "number");
     assert.ok(participant.elapsedMs >= 0);
   } finally {
     teacher.close();
@@ -202,6 +225,50 @@ test("afslutter ikke spillet før slutartiklen er nået", async () => {
     const finished = await nextMessage(teacher);
     assert.equal(finished.room.participants[0].finished, true);
     assert.equal(finished.room.participants[0].clicks, 1);
+  } finally {
+    teacher.close();
+    student.close();
+    await server.close();
+  }
+});
+test("læreren kan stoppe et igangværende spil", async () => {
+  const { server, port } = await listenForTest();
+  const teacher = new WebSocket(`ws://127.0.0.1:${port}/ws`);
+  const student = new WebSocket(`ws://127.0.0.1:${port}/ws`);
+
+  try {
+    await nextMessage(teacher);
+    await nextMessage(student);
+    teacher.send(JSON.stringify({ type: "create-room" }));
+    const created = await nextMessage(teacher);
+    student.send(JSON.stringify({ type: "join-room", roomCode: created.roomCode, nickname: "Anna" }));
+    await nextMessage(student);
+    await nextMessage(teacher);
+    teacher.send(JSON.stringify({ type: "set-game-settings", teacherToken: created.teacherToken, startingArticle: "Danmark", endingArticle: "Europa" }));
+    await nextMessage(teacher);
+    await nextMessage(student);
+    teacher.send(JSON.stringify({ type: "start-game", teacherToken: created.teacherToken }));
+    await nextMessage(teacher);
+    await nextMessage(student);
+
+    teacher.send(JSON.stringify({ type: "stop-game", teacherToken: created.teacherToken }));
+    const stopped = await nextMessage(teacher);
+    assert.equal(stopped.room.status, "finished");
+    const studentStopped = await nextMessage(student);
+    assert.equal(studentStopped.room.status, "finished");
+
+    student.send(JSON.stringify({ type: "article-click", from: "Danmark", to: "Europa" }));
+    const denied = await nextMessage(student);
+    assert.equal(denied.code, "game_not_running");
+    teacher.send(JSON.stringify({ type: "reset-game", teacherToken: created.teacherToken }));
+    const reset = await nextMessage(teacher);
+    assert.equal(reset.room.status, "waiting");
+    assert.equal(reset.room.settings.startingArticle, "");
+    assert.equal(reset.room.settings.endingArticle, "");
+    assert.equal(reset.room.participants[0].finished, false);
+    assert.equal(reset.room.participants[0].clicks, null);
+    const studentReset = await nextMessage(student);
+    assert.equal(studentReset.room.status, "waiting");
   } finally {
     teacher.close();
     student.close();

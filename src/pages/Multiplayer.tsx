@@ -7,6 +7,15 @@ import type { Article } from "../stores/GameStore";
 import { useGameStoreActions } from "../stores/GameStore";
 import { activateMultiplayerSession, getMultiplayerClient } from "../multiplayer/session";
 import type { MultiplayerMessage, MultiplayerRoom } from "../multiplayer/MultiplayerClient";
+const getParticipantStatus = (roomStatus: MultiplayerRoom["status"], connected: boolean, finished: boolean) => {
+  if (finished) return "Færdig";
+  if (!connected) return "Afbrudt";
+  if (roomStatus === "waiting") return "Venter";
+  if (roomStatus === "finished") return "Spillet stoppet";
+  return "I gang";
+};
+
+const formatCompletedAt = (completedAt: number) => new Date(completedAt).toLocaleTimeString("da-DK", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 
 type Role = "teacher" | "participant";
 
@@ -48,6 +57,9 @@ const Multiplayer = () => {
         setEndingArticle(message.room.settings.endingArticle);
         setLeaderboardVisible(message.room.settings.leaderboardVisible);
         setRoom(message.room);
+        if (message.room.status !== "running" && role === "participant") {
+          setIsGameRunning(false);
+        }
         if (message.room.status === "running" && role === "participant") {
           resetStopwatch();
           resetStoreState();
@@ -137,8 +149,10 @@ const Multiplayer = () => {
                 defaultValue={endingArticle}
                 selectId="multiplayer-end-article"
               />
+              <button type="button" className="w-fit border border-secondary-border px-6 py-3 hover:bg-secondary-blue disabled:opacity-50" onClick={() => client.resetGame(teacherToken)} disabled={room.status !== "finished"}>Nyt spil</button>
               <button type="submit" className="w-fit bg-secondary-blue px-6 py-3 hover:bg-primary-blue">Gem artikler</button>
               <button type="button" className="w-fit bg-primary-blue px-6 py-3 hover:bg-secondary-blue disabled:opacity-50" onClick={() => client.startGame(teacherToken)} disabled={room.status !== "waiting" || !startingArticle || !endingArticle}>Start spillet</button>
+              <button type="button" className="w-fit border border-red-700 px-6 py-3 text-red-700 hover:bg-red-50 disabled:opacity-50" onClick={() => client.stopGame(teacherToken)} disabled={room.status !== "running"}>Stop spillet</button>
               <label className="flex items-center gap-2">
                 <input type="checkbox" checked={leaderboardVisible} onChange={(event) => { setLeaderboardVisible(event.target.checked); client.setLeaderboardVisibility(teacherToken, event.target.checked); }} />
                 Vis ranglisten for elever
@@ -150,8 +164,10 @@ const Multiplayer = () => {
               <p>{startingArticle || "Startartikel ikke valgt"} → {endingArticle || "Slutartikel ikke valgt"}</p>
             </div>
           )}
-          <h3 className="font-semibold">Deltagere ({room.participants.length})</h3>
-          <ul className="list-inside list-disc">{room.participants.map((participant) => <li key={participant.id}>{participant.nickname}{participant.finished && participant.elapsedMs !== null ? ` – ${Math.round(participant.elapsedMs / 1000)} sekunder (${participant.clicks} klik)` : ""}</li>)}</ul>
+          <ul className="list-inside list-disc">{room.participants.map((participant) => <li key={participant.id}>
+            <span>{participant.nickname} — {getParticipantStatus(room.status, participant.connected, participant.finished)}</span>
+            {participant.finished && participant.elapsedMs !== null ? ` – ${Math.round(participant.elapsedMs / 1000)} sekunder (${participant.clicks} klik)` : ""}{participant.finished && participant.completedAt !== null ? ` kl. ${formatCompletedAt(participant.completedAt)}` : ""}
+          </li>)}</ul>
           {(role === "teacher" || room.settings.leaderboardVisible) && <div className="border-t border-secondary-border pt-4">
             <h3 className="text-xl">Rangliste</h3>
             {room.participants.filter((participant) => participant.finished && participant.elapsedMs !== null).toSorted((a, b) => (a.elapsedMs ?? Infinity) - (b.elapsedMs ?? Infinity)).slice(0, 3).map((participant, index) => (

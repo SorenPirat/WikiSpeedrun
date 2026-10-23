@@ -3,8 +3,8 @@ import { test } from "node:test";
 import { WebSocket } from "ws";
 import { createMultiplayerServer } from "./index.js";
 
-const listenForTest = async () => {
-  const server = createMultiplayerServer();
+const listenForTest = async (options = {}) => {
+  const server = createMultiplayerServer(options);
   const address = await server.listen(0);
   assert.ok(address && typeof address === "object");
   return { server, port: address.port };
@@ -38,6 +38,52 @@ test("websocket endpoint accepts a client and sends a connection event", async (
     assert.equal(message.type, "connected");
     assert.equal(typeof message.serverTime, "number");
   } finally {
+    await server.close();
+  }
+});
+test("enforced origin protection accepts only the configured origin", async () => {
+  const { server, port } = await listenForTest({ allowedOrigin: "https://game.example" });
+
+  try {
+    const accepted = await new Promise((resolve, reject) => {
+      const client = new WebSocket(`ws://127.0.0.1:${port}/ws`, { headers: { Origin: "https://game.example" } });
+      client.once("message", (data) => {
+        client.close();
+        resolve(JSON.parse(data.toString()));
+      });
+      client.once("error", reject);
+    });
+    assert.equal(accepted.type, "connected");
+
+    await new Promise((resolve, reject) => {
+      const client = new WebSocket(`ws://127.0.0.1:${port}/ws`, { headers: { Origin: "https://evil.example" } });
+      client.once("unexpected-response", (_request, response) => {
+        assert.equal(response.statusCode, 403);
+        resolve();
+      });
+      client.once("error", reject);
+    });
+  } finally {
+    await server.close();
+  }
+});
+test("lukker klienter, der overskrider beskedgrænsen", async () => {
+  const { server, port } = await listenForTest();
+  const client = new WebSocket("ws://127.0.0.1:" + port + "/ws");
+
+  try {
+    await new Promise((resolve, reject) => {
+      client.once("message", resolve);
+      client.once("error", reject);
+    });
+    const closeCode = new Promise((resolve, reject) => {
+      client.once("close", (code) => resolve(code));
+      client.once("error", reject);
+    });
+    for (let index = 0; index < 61; index += 1) client.send("{}");
+    assert.equal(await closeCode, 1008);
+  } finally {
+    client.close();
     await server.close();
   }
 });

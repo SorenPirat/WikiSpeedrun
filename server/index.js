@@ -6,6 +6,8 @@ import { createRoomManager } from "./rooms.js";
 const DEFAULT_PORT = 10000;
 const HEARTBEAT_INTERVAL_MS = 30_000;
 const MAX_MESSAGE_BYTES = 64 * 1024;
+const RATE_LIMIT_WINDOW_MS = 10_000;
+const MAX_MESSAGES_PER_WINDOW = 60;
 
 const json = (response, statusCode, body) => {
   response.writeHead(statusCode, { "content-type": "application/json; charset=utf-8" });
@@ -17,7 +19,8 @@ const rejectUpgrade = (socket, statusCode, message) => {
   socket.destroy();
 };
 
-export const createMultiplayerServer = ({ allowedOrigin = "" } = {}) => {
+export const createMultiplayerServer = (options = {}) => {
+  const { allowedOrigin = "" } = options;
   const httpServer = createServer((request, response) => {
     if (request.method === "GET" && request.url === "/health") {
       json(response, 200, { status: "ok" });
@@ -28,7 +31,7 @@ export const createMultiplayerServer = ({ allowedOrigin = "" } = {}) => {
   });
 
   const webSocketServer = new WebSocketServer({ noServer: true, maxPayload: MAX_MESSAGE_BYTES });
-  const roomManager = createRoomManager();
+  const roomManager = createRoomManager(options);
 
   httpServer.on("upgrade", (request, socket, head) => {
     const requestUrl = new URL(request.url ?? "/", `http://${request.headers.host ?? "localhost"}`);
@@ -50,13 +53,25 @@ export const createMultiplayerServer = ({ allowedOrigin = "" } = {}) => {
 
   webSocketServer.on("connection", (client) => {
     client.isAlive = true;
+    client.rateLimit = { startedAt: Date.now(), count: 0 };
     client.on("pong", () => {
       client.isAlive = true;
     });
     client.on("error", () => {
       client.terminate();
     });
-    client.on("message", (message) => roomManager.handleMessage(client, message));
+    client.on("message", (message) => {
+      const now = Date.now();
+      if (now - client.rateLimit.startedAt >= RATE_LIMIT_WINDOW_MS) {
+        client.rateLimit = { startedAt: now, count: 0 };
+      }
+      client.rateLimit.count += 1;
+      if (client.rateLimit.count > MAX_MESSAGES_PER_WINDOW) {
+        client.close(1008, "For mange beskeder");
+        return;
+      }
+      roomManager.handleMessage(client, message);
+    });
     client.on("close", () => roomManager.handleDisconnect(client));
     client.send(JSON.stringify({ type: "connected", serverTime: Date.now() }));
   });
@@ -78,6 +93,7 @@ export const createMultiplayerServer = ({ allowedOrigin = "" } = {}) => {
   const close = () =>
     new Promise((resolve, reject) => {
       clearInterval(heartbeat);
+      roomManager.close();
       for (const client of webSocketServer.clients) client.close(1001, "Server shutdown");
       webSocketServer.close((webSocketError) => {
         if (webSocketError) {

@@ -22,13 +22,14 @@ Valget holder første version enkel:
 - Lærerhandlinger kræver lærer-token; rumkoden alene giver ikke læreradgang.
 - Kaldenavne valideres, begrænses i længde og vises kun i det aktuelle rum.
 - Serveren gemmer ikke IP-adresser eller andre unødvendige personoplysninger.
+- I hukommelsen gemmes kun rumkode, pseudonym, forbindelsesstatus, spilstatus, klik, tider og nødvendige tokens.
 
 ## Serveransvar
 
 Serveren er autoritativ for startartikel, slutartikel, spilstart, deltagere,
 gennemførelsestid, antal artikelklik, færdig-status og ranglisteorden.
 
-Klienten sender `join`, `start`, `article-loaded`, `article-click` og `finished`.
+Klienten sender join, lærerhandlinger, artikelklik og afslutning; serveren sender rum-snapshots.
 Serveren validerer rum, token og rækkefølge og sender derefter snapshots eller
 små hændelser til alle i rummet.
 
@@ -62,6 +63,7 @@ små hændelser til alle i rummet.
 - Inaktive rum udløber automatisk.
 - Netlify build-kommando er `npm run build`, og publish-mappen er `dist`. SPA-routes skal omskrives til `index.html`.
 - Klienterne bruger `wss://` til Render-serveren i produktion. WebSocket-klienten skal kunne genforbinde med eksponentiel backoff, og serveren skal have et simpelt HTTP health-endpoint.
+- Ved Render-genstart mistes aktive rum og resultater, fordi der ikke bruges database; læreren skal oprette et nyt rum.
 
 ## Senere: InfoRace
 

@@ -17,6 +17,10 @@ class FakeWebSocket {
   }
 
   close() {}
+  disconnect() {
+    this.readyState = 0;
+    this.handlers.get("close")?.forEach((handler) => handler(new MessageEvent("close")));
+  }
 
   emit(message: unknown) {
     this.handlers.get("message")?.forEach((handler) =>
@@ -54,5 +58,23 @@ describe("MultiplayerClient", () => {
 
     socket.emit({ type: "room-state", room: { roomCode: "ABC123", status: "waiting", startedAt: null, settings: { startingArticle: "", endingArticle: "", leaderboardVisible: true }, participants: [] } });
     expect(listener).toHaveBeenCalledWith(expect.objectContaining({ type: "room-state" }));
+  });
+
+  it("genforbinder med samme deltager-token efter forbindelsesbrud", async () => {
+    vi.useFakeTimers();
+    try {
+      const client = new MultiplayerClient("ws://test/ws");
+      await client.connect();
+      const firstSocket = socket;
+      client.joinRoom("ABC123", "Anna");
+      firstSocket.emit({ type: "room-joined", roomCode: "ABC123", participantToken: "participant-token", room: { roomCode: "ABC123", status: "running", startedAt: 123, settings: { startingArticle: "Danmark", endingArticle: "Europa", leaderboardVisible: true }, participants: [] } });
+      firstSocket.disconnect();
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(socket).not.toBe(firstSocket);
+      expect(socket.sent).toContain(JSON.stringify({ type: "join-room", roomCode: "ABC123", nickname: "Anna", participantToken: "participant-token" }));
+      client.close();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

@@ -20,10 +20,18 @@
 - Multiplayer-rummet viser nu top 3 med gennemførelsestid og klik i realtid.
 - Læreren kan slå ranglistens synlighed til og fra for eleverne.
 - Elever kan nu genforbinde efter spilstart med deres deltager-token.
+- Multiplayer-klienten genforbinder automatisk elever med eksponentiel ventetid efter forbindelsesbrud.
 - WebSocket-serveren afviser beskeder over 64 KB.
+- Render-serveren kræver nu `ALLOWED_ORIGIN`, når `REQUIRE_ALLOWED_ORIGIN=true`.
+- Inaktive rum uden åbne forbindelser fjernes automatisk efter 30 minutter.
+- WebSocket-klienter begrænses til 60 beskeder pr. 10 sekunder.
 - Netlify- og Render-konfigurationer er tilføjet som `netlify.toml`, `render.yaml` og `.env.example`.
 - Serveren validerer nu artikelrækkefølge og tæller hvert multiplayer-klik selv.
 - Serveren kræver nu, at slutartiklen er nået, før en elev kan afslutte spillet.
+- Læreren kan stoppe et igangværende spil, og elevernes klik blokeres efter stop.
+- Læreren kan nulstille et afsluttet spil og starte et nyt spil i samme rum.
+- Deltagerlisten viser live-status for ventende, aktive, færdige og afbrudte elever.
+- Serveren gemmer gennemførelsestidspunktet, som vises sammen med tid og klik.
 - Netlify-frontend og Render-WebSocket-server er deployet og testet med lærer- og elevforbindelse.
 - Artikelvælgerne genbruger eksisterende Wikipedia-autocomplete på dansk.
 
@@ -39,6 +47,8 @@
 ## Kendte problemer
 
 - Serveren validerer artikelrækkefølge og slutartikel, men kontrollerer endnu ikke, om hvert rapporteret link faktisk findes på Wikipedia-artiklen.
+- Den samlede sikkerheds- og driftsgennemgang er endnu ikke afsluttet.
+- Dataminimering og restart-adfærd er dokumenteret; serveren bruger kun midlertidig hukommelse til multiplayer-data.
 - Netlify- og Render-deployment fungerer; produktionsmiljøet bruger `VITE_MULTIPLAYER_WS_URL` og `ALLOWED_ORIGIN`.
 - Multiplayer-gennemførelsestid og resultater er serverstyrede; den eksisterende singleplayer-tid er fortsat lokal.
 - Interface og Wikipedia-standard er nu dansk; fuld oversættelse af ældre sekundære tekster fortsætter løbende.
