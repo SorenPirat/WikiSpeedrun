@@ -3,9 +3,14 @@ import { MultiplayerClient } from "./MultiplayerClient";
 
 class FakeWebSocket {
   static OPEN = 1;
+  static lastCreated: FakeWebSocket | undefined;
   readyState = FakeWebSocket.OPEN;
   sent: string[] = [];
   private handlers = new Map<string, ((event: MessageEvent) => void)[]>();
+
+  constructor() {
+    FakeWebSocket.lastCreated = this;
+  }
 
   addEventListener(type: string, handler: (event: MessageEvent) => void) {
     this.handlers.set(type, [...(this.handlers.get(type) ?? []), handler]);
@@ -33,16 +38,8 @@ describe("MultiplayerClient", () => {
   let socket: FakeWebSocket;
 
   beforeEach(() => {
-    class TestWebSocket extends FakeWebSocket {
-      static OPEN = FakeWebSocket.OPEN;
-
-      constructor() {
-        super();
-        socket = this;
-      }
-    }
-
-    vi.stubGlobal("WebSocket", TestWebSocket);
+    FakeWebSocket.lastCreated = undefined;
+    vi.stubGlobal("WebSocket", FakeWebSocket);
   });
 
   it("sender opret-rum og modtager rumstatus", async () => {
@@ -51,6 +48,7 @@ describe("MultiplayerClient", () => {
 
     client.onMessage(listener);
     await client.connect();
+    socket = FakeWebSocket.lastCreated!;
     client.createRoom();
     client.joinRoom("ABC123", "Anna");
 
@@ -60,21 +58,35 @@ describe("MultiplayerClient", () => {
     expect(listener).toHaveBeenCalledWith(expect.objectContaining({ type: "room-state" }));
   });
 
-  it("genforbinder med samme deltager-token efter forbindelsesbrud", async () => {
-    vi.useFakeTimers();
-    try {
-      const client = new MultiplayerClient("ws://test/ws");
-      await client.connect();
-      const firstSocket = socket;
-      client.joinRoom("ABC123", "Anna");
-      firstSocket.emit({ type: "room-joined", roomCode: "ABC123", participantToken: "participant-token", room: { roomCode: "ABC123", status: "running", startedAt: 123, settings: { startingArticle: "Danmark", endingArticle: "Europa", leaderboardVisible: true }, participants: [] } });
-      firstSocket.disconnect();
-      await vi.advanceTimersByTimeAsync(1000);
-      expect(socket).not.toBe(firstSocket);
-      expect(socket.sent).toContain(JSON.stringify({ type: "join-room", roomCode: "ABC123", nickname: "Anna", participantToken: "participant-token" }));
-      client.close();
-    } finally {
-      vi.useRealTimers();
-    }
+  it("melder forbindelsesstatus ved forbindelse og netværksbrud", async () => {
+    const client = new MultiplayerClient("ws://test/ws");
+    const states: string[] = [];
+    client.onConnectionStateChange((state) => states.push(state));
+
+    await client.connect();
+    const connectedSocket = FakeWebSocket.lastCreated;
+    if (!connectedSocket) throw new Error("Forbindelsen oprettede ikke en socket");
+    connectedSocket.disconnect();
+
+    expect(states).toEqual(["connecting", "connected", "disconnected"]);
+    client.close();
   });
+
+  it("genforbinder med samme deltager-token efter forbindelsesbrud", async () => {
+    const client = new MultiplayerClient("ws://test/ws");
+    await client.connect();
+    socket = FakeWebSocket.lastCreated!;
+    const firstSocket = socket;
+    client.joinRoom("ABC123", "Anna");
+    firstSocket.emit({ type: "room-joined", roomCode: "ABC123", participantToken: "participant-token", room: { roomCode: "ABC123", status: "running", startedAt: 123, settings: { startingArticle: "Danmark", endingArticle: "Europa", leaderboardVisible: true }, participants: [] } });
+    firstSocket.disconnect();
+    client.close();
+    await client.connect();
+    if (!FakeWebSocket.lastCreated) throw new Error("Reconnect oprettede ikke en ny socket");
+    const nextSocket = FakeWebSocket.lastCreated;
+    expect(nextSocket).not.toBe(firstSocket);
+    expect(nextSocket.sent).toContain(JSON.stringify({ type: "join-room", roomCode: "ABC123", nickname: "Anna", participantToken: "participant-token" }));
+    client.close();
+  });
+
 });

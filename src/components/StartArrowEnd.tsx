@@ -8,8 +8,8 @@ interface Props {
 }
 export const StartArrowEnd = ({ endText, startText, className }: Props) => {
   return (
-    <p className={cn("flex items-center gap-2 text-lg font-bold", className)}>
-      <span>{startText}</span> <RightArrow /> <span>{endText}</span>
+    <p className={cn("flex flex-wrap items-center gap-2 text-lg font-bold md:text-base", className)}>
+      <span className="break-words">{startText}</span> <RightArrow /> <span className="break-words">{endText}</span>
     </p>
   );
 };

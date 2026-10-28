@@ -64,7 +64,7 @@ export const messageDescriptors = {
   "Cheating attempts": /** i18n */ msg({ id: "Cheating attempts", message: "Cheating attempts" }),
   Results: /** i18n */ msg({ id: "Results", message: "Results" }),
   "Play again": /** i18n */ msg({ id: "Play again", message: "Play again" }),
-  "Give up": /** i18n */ msg({ id: "Give up", message: "Give up" }),
+  "Give up": /** i18n */ msg({ id: "Give up", message: "Forlad spillet" }),
   "Confirm action": /** i18n */ msg({ id: "Confirm action", message: "Confirm action" }),
   "If you leave, your current progress will be lost": /** i18n */ msg({
     id: "If you leave, your current progress will be lost",

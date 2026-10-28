@@ -49,7 +49,7 @@ export const Stats = () => {
 
 const Stat = ({ name, value }: { name: string; value: React.ReactNode }) => {
   return (
-    <li className="stat-wrapper flex text-secondary-border">
+    <li className="stat-wrapper flex rounded-xl bg-black/5 px-4 py-3 text-secondary-border dark:bg-white/5">
       <span className="order-1 text-black dark:text-dark-primary">{name}</span>
       <span className="order-3 text-black dark:text-dark-primary">{value}</span>
     </li>

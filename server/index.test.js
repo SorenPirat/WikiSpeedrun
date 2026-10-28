@@ -57,7 +57,7 @@ test("enforced origin protection accepts only the configured origin", async () =
 
     await new Promise((resolve, reject) => {
       const client = new WebSocket(`ws://127.0.0.1:${port}/ws`, { headers: { Origin: "https://evil.example" } });
-      client.once("unexpected-response", (_request, response) => {
+      client.once("unexpected-response", (...[, response]) => {
         assert.equal(response.statusCode, 403);
         resolve();
       });
@@ -96,7 +96,7 @@ test("rejects WebSocket messages larger than 64 KB", async () => {
       client.once("message", resolve);
       client.once("error", reject);
     });
-    const closeCode = await new Promise((resolve, reject) => {
+    const closeCode = await new Promise((resolve, _reject) => {
       client.once("close", (code) => resolve(code));
       client.once("error", () => {});
       client.send("x".repeat(64 * 1024 + 1));

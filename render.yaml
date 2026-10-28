@@ -11,3 +11,5 @@ services:
         sync: false
       - key: REQUIRE_ALLOWED_ORIGIN
         value: "true"
+      - key: TEACHER_ACCESS_CODE
+        sync: false

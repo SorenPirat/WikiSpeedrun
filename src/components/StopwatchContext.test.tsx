@@ -16,7 +16,7 @@ const Controls = () => {
   const [captured, setCaptured] = useState("");
   return (
     <>
-      <button type="button" onClick={startStopwatch}>
+      <button type="button" onClick={() => startStopwatch()}>
         start
       </button>
       <button type="button" onClick={pauseStopwatch}>

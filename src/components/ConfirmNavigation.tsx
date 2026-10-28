@@ -1,10 +1,12 @@
 import { useResetGame } from "../hooks/useResetGame";
+import { isMultiplayerSessionActive } from "../multiplayer/session";
 import { useLingui } from "@lingui/react/macro";
 import { ModalContent, ModalDescription, ModalRoot, ModalTitle, ModalTrigger } from "./Modal";
 
 export const GiveUpModal = () => {
   const { t } = useLingui();
   const resetGame = useResetGame();
+  const isMultiplayer = isMultiplayerSessionActive();
   return (
     <ModalRoot>
       <ModalTrigger asChild>
@@ -12,7 +14,7 @@ export const GiveUpModal = () => {
           type="button"
           className="p-4 hover:text-primary-blue focus-visible:text-primary-blue sm:p-2"
         >
-          {t({ id: "Give up" })}
+          {t({ id: "Give up", message: "Forlad spillet" })}
         </button>
       </ModalTrigger>
       <ModalContent>
@@ -20,7 +22,7 @@ export const GiveUpModal = () => {
           {t({ id: "Confirm action" })}
         </ModalTitle>
         <ModalDescription className="mt-[10px] mb-5 text-sm leading-normal">
-          {t({ id: "If you leave, your current progress will be lost" })}
+          {isMultiplayer ? t({ id: "Multiplayer progress is saved", message: "Din rute og tid gemmes, så du kan fortsætte senere." }) : t({ id: "If you leave, your current progress will be lost" })}
         </ModalDescription>
         <ModalTrigger asChild>
           <button
@@ -28,7 +30,7 @@ export const GiveUpModal = () => {
             className="w-fit self-end bg-secondary-blue px-4 py-2 hover:bg-primary-blue focus-visible:bg-primary-blue"
             onClick={resetGame}
           >
-            {t({ id: "Give up" })}
+            {t({ id: "Give up", message: "Forlad spillet" })}
           </button>
         </ModalTrigger>
       </ModalContent>

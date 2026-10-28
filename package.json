@@ -23,8 +23,8 @@
     "doctor": "react-doctor -y --no-score --blocking error",
     "test:browser": "vitest",
     "test:e2e": "playwright test",
-    "server": "node server/index.js",
-    "server:dev": "node --watch server/index.js",
+    "server": "node --env-file-if-exists=.env.server.local server/index.js",
+    "server:dev": "node --env-file-if-exists=.env.server.local --watch server/index.js",
     "server:test": "node --test server/index.test.js server/rooms.test.js"
   },
   "dependencies": {

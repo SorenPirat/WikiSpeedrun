@@ -18,7 +18,7 @@ const Header = () => {
 
   const links: WikiLink[] = [
     { name: t({ id: "Play" }), path: "/settings" },
-    { name: "Flerspiller", path: "/multiplayer" },
+    { name: "Multiplayer", path: "/multiplayer" },
   ];
 
   const isGameRunning = useIsGameRunning();
@@ -26,7 +26,7 @@ const Header = () => {
   const { colorMode, switchTheme } = useThemeContext();
 
   return (
-    <div className="flex items-center gap-12 border-b-[2px] border-secondary-blue pb-3 sm:gap-0">
+    <div className="flex items-center gap-12 rounded-b-2xl border-b-[2px] border-secondary-blue pb-3 sm:gap-0">
       <WikiLogo />
       <nav className="flex h-full flex-1 items-center gap-4">
         <div className="flex gap-4 lg:hidden">

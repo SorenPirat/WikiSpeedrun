@@ -21,7 +21,7 @@ msgid "Something went wrong:"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/Sidebar.tsx:45
+#: src/components/Sidebar.tsx:63
 msgid "Clicks: {clicks}"
 msgstr "Klick: {clicks}"
 
@@ -71,7 +71,6 @@ msgid "twitter (X)"
 msgstr "Twitter (X)"
 
 #. js-lingui-explicit-id
-#: src/components/Header.tsx:24
 #: src/lingui.ts:43
 msgid "About"
 msgstr "Om"
@@ -82,7 +81,6 @@ msgid "Achievement unlocked"
 msgstr "Prestation upplåst"
 
 #. js-lingui-explicit-id
-#: src/components/Header.tsx:23
 #: src/lingui.ts:133
 #: src/pages/Achievements.tsx:15
 msgid "Achievements"
@@ -141,7 +139,7 @@ msgid "Cheating attempts"
 msgstr "Försök till fusk"
 
 #. js-lingui-explicit-id
-#: src/components/Wiki/WikiLogic.tsx:28
+#: src/components/Wiki/WikiLogic.tsx:29
 #: src/lingui.ts:102
 msgid "Choose another link"
 msgstr "Välj en annan länk"
@@ -168,8 +166,8 @@ msgid "FirstWin.description"
 msgstr "Slutför din första speedrun"
 
 #. js-lingui-explicit-id
-#: src/components/ConfirmNavigation.tsx:20
-#: src/components/Wiki/Wiki.tsx:90
+#: src/components/ConfirmNavigation.tsx:22
+#: src/components/Wiki/Wiki.tsx:236
 #: src/lingui.ts:68
 msgid "Confirm action"
 msgstr "Bekräfta åtgärd"
@@ -177,7 +175,7 @@ msgstr "Bekräfta åtgärd"
 #. js-lingui-explicit-id
 #: src/components/ResultDialog.tsx:44
 #: src/lingui.ts:107
-#: src/pages/Settings.tsx:81
+#: src/pages/Settings.tsx:80
 msgid "Copied to clipboard"
 msgstr "Kopierad till urklipp"
 
@@ -209,13 +207,18 @@ msgid "Dark theme support"
 msgstr "Mörkt tema stöd"
 
 #. js-lingui-explicit-id
+#: src/components/ConfirmNavigation.tsx:25
+msgid "Multiplayer progress is saved"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/lingui.ts:299
 msgid "EgoStroke.title"
 msgstr "Ego Stroke"
 
 #. js-lingui-explicit-id
 #: src/lingui.ts:325
-#: src/pages/Settings.tsx:133
+#: src/pages/Settings.tsx:131
 msgid "Enable search during gameplay"
 msgstr "Aktivera sökning under spelet"
 
@@ -255,6 +258,23 @@ msgstr "Första vinsten"
 msgid "Follow him on"
 msgstr "Följ honom på"
 
+#. Status shown while multiplayer is offline and automatic reconnect is being attempted
+#: src/components/MultiplayerConnectionStatus.tsx:12
+msgid "Forbindelsen er afbrudt. Prøver igen…"
+msgstr ""
+
+#. Status shown while connecting or reconnecting to the multiplayer server
+#: src/components/MultiplayerConnectionStatus.tsx:11
+msgid "Forbinder til multiplayer-serveren…"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/ConfirmNavigation.tsx:17
+#: src/components/ConfirmNavigation.tsx:33
+#: src/lingui.ts:67
+msgid "Give up"
+msgstr "Ge upp"
+
 #. js-lingui-explicit-id
 #: src/lingui.ts:237
 msgid "FortuneSeeker.title"
@@ -277,13 +297,6 @@ msgid "Get random article"
 msgstr "Få slumpmässig artikel"
 
 #. js-lingui-explicit-id
-#: src/components/ConfirmNavigation.tsx:15
-#: src/components/ConfirmNavigation.tsx:31
-#: src/lingui.ts:67
-msgid "Give up"
-msgstr "Ge upp"
-
-#. js-lingui-explicit-id
 #: src/lingui.ts:25
 #: src/pages/About.tsx:21
 msgid "High precision fair™ timer"
@@ -302,8 +315,8 @@ msgid "If you clear your browser data or switch to another browser all of your d
 msgstr "Om du rensar dina webbläsardata eller byter till en annan webbläsare kommer all din data att försvinna."
 
 #. js-lingui-explicit-id
-#: src/components/ConfirmNavigation.tsx:23
-#: src/components/Wiki/Wiki.tsx:93
+#: src/components/ConfirmNavigation.tsx:25
+#: src/components/Wiki/Wiki.tsx:239
 #: src/lingui.ts:69
 msgid "If you leave, your current progress will be lost"
 msgstr "Om du lämnar kommer din nuvarande framsteg att gå förlorad"
@@ -397,7 +410,7 @@ msgid "Navigation"
 msgstr "Navigering"
 
 #. js-lingui-explicit-id
-#: src/components/Wiki/Wiki.tsx:108
+#: src/components/Wiki/Wiki.tsx:254
 #: src/lingui.ts:330
 msgid "No"
 msgstr "Nej"
@@ -438,10 +451,10 @@ msgid "Open source"
 msgstr "Öppen källkod"
 
 #. js-lingui-explicit-id
-#: src/components/Header.tsx:21
+#: src/components/Header.tsx:20
 #: src/lingui.ts:42
 #: src/pages/About.tsx:33
-#: src/pages/Settings.tsx:151
+#: src/pages/Settings.tsx:149
 msgid "Play"
 msgstr "Spela"
 
@@ -506,7 +519,9 @@ msgstr "Slumpmässiga val:"
 
 #. js-lingui-explicit-id
 #: src/lingui.ts:98
-#: src/pages/Settings.tsx:191
+#: src/pages/Multiplayer.tsx:223
+#: src/pages/Multiplayer.tsx:235
+#: src/pages/Settings.tsx:189
 msgid "Random failed, try again"
 msgstr "Slumpmässig misslyckades, försök igen"
 
@@ -551,19 +566,19 @@ msgstr "Välj språk för artikel"
 
 #. js-lingui-explicit-id
 #: src/lingui.ts:55
-#: src/pages/Settings.tsx:120
+#: src/pages/Settings.tsx:118
 msgid "Select ending article"
 msgstr "Välj slutartikel"
 
 #. js-lingui-explicit-id
 #: src/lingui.ts:51
-#: src/pages/Settings.tsx:107
+#: src/pages/Settings.tsx:105
 msgid "Select starting article"
 msgstr "Välj startartikel"
 
 #. js-lingui-explicit-id
 #: src/lingui.ts:44
-#: src/pages/Settings.tsx:88
+#: src/pages/Settings.tsx:87
 msgid "Settings"
 msgstr "Inställningar"
 
@@ -575,7 +590,7 @@ msgstr "Dela resultat"
 
 #. js-lingui-explicit-id
 #: src/lingui.ts:106
-#: src/pages/Settings.tsx:144
+#: src/pages/Settings.tsx:142
 msgid "Share settings"
 msgstr "Dela inställningar"
 
@@ -586,7 +601,7 @@ msgstr "Vass Navigator"
 
 #. Link to the project's GitHub repository
 #. js-lingui-explicit-id
-#: src/components/Header.tsx:122
+#: src/components/Header.tsx:118
 msgid "Source code on github"
 msgstr "Källkod på GitHub"
 
@@ -612,19 +627,18 @@ msgstr "Snabbköpare"
 
 #. js-lingui-explicit-id
 #: src/lingui.ts:46
-#: src/pages/Settings.tsx:92
+#: src/pages/Settings.tsx:91
 msgid "Start typing and then select values from the dropdown list or press the random button"
 msgstr "Börja skriva och välj sedan värden från rullgardinsmenyn eller tryck på slumpknappen."
 
 #. js-lingui-explicit-id
 #: src/lingui.ts:59
-#: src/pages/Settings.tsx:108
-#: src/pages/Settings.tsx:121
+#: src/pages/Settings.tsx:106
+#: src/pages/Settings.tsx:119
 msgid "Start typing to see options"
 msgstr "Börja skriva för att se alternativ"
 
 #. js-lingui-explicit-id
-#: src/components/Header.tsx:22
 #: src/lingui.ts:123
 #: src/pages/Stats.tsx:30
 msgid "Statistics"
@@ -655,7 +669,7 @@ msgstr "Tid"
 
 #. Button that switches between light and dark mode
 #. js-lingui-explicit-id
-#: src/components/Header.tsx:54
+#: src/components/Header.tsx:50
 msgid "Toggle theme"
 msgstr "Växla tema"
 
@@ -670,6 +684,11 @@ msgstr "Totalt antal spel:"
 msgid "Trilingual.title"
 msgstr "Trespråkig"
 
+#. Message shown when a player clicks an article while multiplayer is offline
+#: src/components/Wiki/WikiLogic.tsx:75
+msgid "Vent på forbindelsen, før du vælger et nyt link."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/lingui.ts:161
 msgid "WikiExplorer.title"
@@ -682,7 +701,7 @@ msgid "Wiki Speedrun Game"
 msgstr "Wiki Speedrun Spel"
 
 #. js-lingui-explicit-id
-#: src/components/Header.tsx:86
+#: src/components/Header.tsx:82
 #: src/lingui.ts:86
 msgid "Wiki speedrun logo, featuring a Wikipedia sphere with a timer across i (looks like a big black stripe with a green time text on top) The time is 9 seconds and 5 milliseconds"
 msgstr "Wiki speedrun-logotyp, med en Wikipediasfär med en timer över i (ser ut som en stor svart rand med grön tids text på toppen). Tiden är 9 sekunder och 5 millisekunder."
@@ -760,7 +779,7 @@ msgid "Wins:"
 msgstr "Vinster:"
 
 #. js-lingui-explicit-id
-#: src/components/Wiki/Wiki.tsx:101
+#: src/components/Wiki/Wiki.tsx:247
 #: src/lingui.ts:329
 msgid "Yes"
 msgstr "Ja"

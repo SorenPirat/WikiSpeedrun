@@ -21,6 +21,16 @@ const gameArticles = [
     title: "Deep learning",
     html: "<p>Deep learning uses multilayer neural networks.</p>",
   },
+  {
+    pageid: 900001,
+    title: "Startartikel",
+    html: '<p><a href="/wiki/AfvistArtikel" title="AfvistArtikel">AfvistArtikel</a></p><p><a href="/wiki/Slutartikel" title="Slutartikel">Slutartikel</a></p>',
+  },
+  {
+    pageid: 900002,
+    title: "Slutartikel",
+    html: "<p>Slutartikel.</p>",
+  },
 ] as const;
 
 const normalizeTitle = (title: string) => title.toLowerCase().replaceAll("_", " ");

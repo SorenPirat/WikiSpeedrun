@@ -29,7 +29,7 @@ const About = () => {
         <li> {t({ id: "Dark theme support" })}</li>
         <li> {t({ id: "Open source" })}</li>
       </ul>
-      <Link to={"/settings"} className="bg-secondary-blue px-10 py-3 hover:bg-primary-blue">
+      <Link to={"/settings"} className="rounded-xl bg-secondary-blue px-10 py-3 shadow-sm hover:bg-primary-blue">
         {t({ id: "Play" })}
       </Link>
     </>

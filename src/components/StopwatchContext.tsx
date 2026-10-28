@@ -8,7 +8,7 @@ interface StopwatchContext {
 
 interface StopwatchContextActions {
   pauseStopwatch: () => void;
-  startStopwatch: () => void;
+  startStopwatch: (initialElapsedMs?: number) => void;
   resetStopwatch: () => void;
   getFormattedTime: () => {
     min: string;

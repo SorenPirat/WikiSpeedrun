@@ -1,6 +1,6 @@
 import { clsx } from "clsx";
 import purify from "dompurify";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { WikiArticleFontSize } from "../../stores/SettingsStore";
 import articleAdaptationsUrl from "./styles/article-adaptations.css?url";
@@ -45,6 +45,7 @@ export const WikiArticleSurface = ({
   const contentRootRef = useRef<HTMLDivElement | null>(null);
   const settledLinksRef = useRef<Set<string>>(new Set());
   const degradedRef = useRef(false);
+  const readyNotifiedRef = useRef(false);
 
   const styleUrls = useMemo(
     () => [...article.styleUrls, articleAdaptationsUrl],
@@ -52,6 +53,16 @@ export const WikiArticleSurface = ({
   );
   const sanitizedHtml = useMemo(() => purify.sanitize(article.html), [article.html]);
   const isBusy = styleState === null;
+
+  useEffect(() => {
+    if (styleState === null || readyNotifiedRef.current) return;
+
+    const contentRoot = contentRootRef.current;
+    if (!contentRoot) return;
+
+    readyNotifiedRef.current = true;
+    onReady(contentRoot, styleState);
+  }, [onReady, styleState]);
 
   const attachShadowRoot = useCallback((host: HTMLDivElement | null) => {
     if (!host) return;
@@ -74,9 +85,8 @@ export const WikiArticleSurface = ({
 
       const nextState = degradedRef.current ? "degraded" : "ready";
       setStyleState(nextState);
-      onReady(contentRoot, nextState);
     },
-    [onReady, styleUrls.length],
+    [styleUrls.length],
   );
 
   return (

@@ -20,7 +20,7 @@ msgid "Something went wrong:"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/Sidebar.tsx:45
+#: src/components/Sidebar.tsx:63
 msgid "Clicks: {clicks}"
 msgstr "Klik: {clicks}"
 
@@ -70,7 +70,6 @@ msgid "twitter (X)"
 msgstr " Twitter (X)"
 
 #. js-lingui-explicit-id
-#: src/components/Header.tsx:24
 #: src/lingui.ts:43
 msgid "About"
 msgstr "Tentang"
@@ -81,7 +80,6 @@ msgid "Achievement unlocked"
 msgstr "Pencapaian terungkap"
 
 #. js-lingui-explicit-id
-#: src/components/Header.tsx:23
 #: src/lingui.ts:133
 #: src/pages/Achievements.tsx:15
 msgid "Achievements"
@@ -140,7 +138,7 @@ msgid "Cheating attempts"
 msgstr "Percobaan curang"
 
 #. js-lingui-explicit-id
-#: src/components/Wiki/WikiLogic.tsx:28
+#: src/components/Wiki/WikiLogic.tsx:29
 #: src/lingui.ts:102
 msgid "Choose another link"
 msgstr "Pilih tautan lain"
@@ -167,8 +165,8 @@ msgid "FirstWin.description"
 msgstr "Selesaikan speedrun pertama Anda"
 
 #. js-lingui-explicit-id
-#: src/components/ConfirmNavigation.tsx:20
-#: src/components/Wiki/Wiki.tsx:90
+#: src/components/ConfirmNavigation.tsx:22
+#: src/components/Wiki/Wiki.tsx:236
 #: src/lingui.ts:68
 msgid "Confirm action"
 msgstr "Konfirmasi tindakan"
@@ -176,7 +174,7 @@ msgstr "Konfirmasi tindakan"
 #. js-lingui-explicit-id
 #: src/components/ResultDialog.tsx:44
 #: src/lingui.ts:107
-#: src/pages/Settings.tsx:81
+#: src/pages/Settings.tsx:80
 msgid "Copied to clipboard"
 msgstr "Disalin ke clipboard"
 
@@ -208,13 +206,18 @@ msgid "Dark theme support"
 msgstr "Dukungan tema gelap"
 
 #. js-lingui-explicit-id
+#: src/components/ConfirmNavigation.tsx:25
+msgid "Multiplayer progress is saved"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/lingui.ts:299
 msgid "EgoStroke.title"
 msgstr "Ego Stroke"
 
 #. js-lingui-explicit-id
 #: src/lingui.ts:325
-#: src/pages/Settings.tsx:133
+#: src/pages/Settings.tsx:131
 msgid "Enable search during gameplay"
 msgstr "Aktifkan pencarian selama permainan"
 
@@ -254,6 +257,23 @@ msgstr "Kemenangan Pertama"
 msgid "Follow him on"
 msgstr "Ikuti dia di"
 
+#. Status shown while multiplayer is offline and automatic reconnect is being attempted
+#: src/components/MultiplayerConnectionStatus.tsx:12
+msgid "Forbindelsen er afbrudt. Prøver igen…"
+msgstr ""
+
+#. Status shown while connecting or reconnecting to the multiplayer server
+#: src/components/MultiplayerConnectionStatus.tsx:11
+msgid "Forbinder til multiplayer-serveren…"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/ConfirmNavigation.tsx:17
+#: src/components/ConfirmNavigation.tsx:33
+#: src/lingui.ts:67
+msgid "Give up"
+msgstr "Menyerah"
+
 #. js-lingui-explicit-id
 #: src/lingui.ts:237
 msgid "FortuneSeeker.title"
@@ -276,13 +296,6 @@ msgid "Get random article"
 msgstr "Dapatkan artikel acak"
 
 #. js-lingui-explicit-id
-#: src/components/ConfirmNavigation.tsx:15
-#: src/components/ConfirmNavigation.tsx:31
-#: src/lingui.ts:67
-msgid "Give up"
-msgstr "Menyerah"
-
-#. js-lingui-explicit-id
 #: src/lingui.ts:25
 #: src/pages/About.tsx:21
 msgid "High precision fair™ timer"
@@ -301,8 +314,8 @@ msgid "If you clear your browser data or switch to another browser all of your d
 msgstr "Jika Anda menghapus data peramban Anda atau beralih ke peramban lain, semua data Anda akan hilang."
 
 #. js-lingui-explicit-id
-#: src/components/ConfirmNavigation.tsx:23
-#: src/components/Wiki/Wiki.tsx:93
+#: src/components/ConfirmNavigation.tsx:25
+#: src/components/Wiki/Wiki.tsx:239
 #: src/lingui.ts:69
 msgid "If you leave, your current progress will be lost"
 msgstr "Jika Anda meninggalkan, kemajuan saat ini akan hilang"
@@ -396,7 +409,7 @@ msgid "Navigation"
 msgstr "Navigasi"
 
 #. js-lingui-explicit-id
-#: src/components/Wiki/Wiki.tsx:108
+#: src/components/Wiki/Wiki.tsx:254
 #: src/lingui.ts:330
 msgid "No"
 msgstr "Tidak"
@@ -437,10 +450,10 @@ msgid "Open source"
 msgstr "Sumber terbuka"
 
 #. js-lingui-explicit-id
-#: src/components/Header.tsx:21
+#: src/components/Header.tsx:20
 #: src/lingui.ts:42
 #: src/pages/About.tsx:33
-#: src/pages/Settings.tsx:151
+#: src/pages/Settings.tsx:149
 msgid "Play"
 msgstr "Main"
 
@@ -505,7 +518,9 @@ msgstr "Pilihan acak:"
 
 #. js-lingui-explicit-id
 #: src/lingui.ts:98
-#: src/pages/Settings.tsx:191
+#: src/pages/Multiplayer.tsx:223
+#: src/pages/Multiplayer.tsx:235
+#: src/pages/Settings.tsx:189
 msgid "Random failed, try again"
 msgstr "Pilihan acak gagal, coba lagi"
 
@@ -550,19 +565,19 @@ msgstr "Pilih bahasa artikel"
 
 #. js-lingui-explicit-id
 #: src/lingui.ts:55
-#: src/pages/Settings.tsx:120
+#: src/pages/Settings.tsx:118
 msgid "Select ending article"
 msgstr "Pilih artikel akhir"
 
 #. js-lingui-explicit-id
 #: src/lingui.ts:51
-#: src/pages/Settings.tsx:107
+#: src/pages/Settings.tsx:105
 msgid "Select starting article"
 msgstr "Pilih artikel awal"
 
 #. js-lingui-explicit-id
 #: src/lingui.ts:44
-#: src/pages/Settings.tsx:88
+#: src/pages/Settings.tsx:87
 msgid "Settings"
 msgstr "Pengaturan"
 
@@ -574,7 +589,7 @@ msgstr "Bagikan Hasil"
 
 #. js-lingui-explicit-id
 #: src/lingui.ts:106
-#: src/pages/Settings.tsx:144
+#: src/pages/Settings.tsx:142
 msgid "Share settings"
 msgstr "Bagikan pengaturan"
 
@@ -585,7 +600,7 @@ msgstr "Navigator Tajam"
 
 #. Link to the project's GitHub repository
 #. js-lingui-explicit-id
-#: src/components/Header.tsx:122
+#: src/components/Header.tsx:118
 msgid "Source code on github"
 msgstr "Kode sumber di GitHub"
 
@@ -611,19 +626,18 @@ msgstr "Pembalap Cepat"
 
 #. js-lingui-explicit-id
 #: src/lingui.ts:46
-#: src/pages/Settings.tsx:92
+#: src/pages/Settings.tsx:91
 msgid "Start typing and then select values from the dropdown list or press the random button"
 msgstr "Mulai mengetik, lalu pilih nilai dari daftar dropdown atau tekan tombol acak."
 
 #. js-lingui-explicit-id
 #: src/lingui.ts:59
-#: src/pages/Settings.tsx:108
-#: src/pages/Settings.tsx:121
+#: src/pages/Settings.tsx:106
+#: src/pages/Settings.tsx:119
 msgid "Start typing to see options"
 msgstr "Mulai mengetik untuk melihat opsi"
 
 #. js-lingui-explicit-id
-#: src/components/Header.tsx:22
 #: src/lingui.ts:123
 #: src/pages/Stats.tsx:30
 msgid "Statistics"
@@ -654,7 +668,7 @@ msgstr "Waktu"
 
 #. Button that switches between light and dark mode
 #. js-lingui-explicit-id
-#: src/components/Header.tsx:54
+#: src/components/Header.tsx:50
 msgid "Toggle theme"
 msgstr "Ganti tema"
 
@@ -669,6 +683,11 @@ msgstr "Total permainan:"
 msgid "Trilingual.title"
 msgstr "Trilingual"
 
+#. Message shown when a player clicks an article while multiplayer is offline
+#: src/components/Wiki/WikiLogic.tsx:75
+msgid "Vent på forbindelsen, før du vælger et nyt link."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/lingui.ts:161
 msgid "WikiExplorer.title"
@@ -681,7 +700,7 @@ msgid "Wiki Speedrun Game"
 msgstr "Permainan Wiki Speedrun"
 
 #. js-lingui-explicit-id
-#: src/components/Header.tsx:86
+#: src/components/Header.tsx:82
 #: src/lingui.ts:86
 msgid "Wiki speedrun logo, featuring a Wikipedia sphere with a timer across i (looks like a big black stripe with a green time text on top) The time is 9 seconds and 5 milliseconds"
 msgstr "Logo wiki speedrun, menampilkan bola Wikipedia dengan timer di sepanjangnya (mirip dengan garis hitam besar dengan teks waktu hijau di bagian atas). Waktu adalah 9 detik dan 5 milidetik."
@@ -759,7 +778,7 @@ msgid "Wins:"
 msgstr "Kemenangan:"
 
 #. js-lingui-explicit-id
-#: src/components/Wiki/Wiki.tsx:101
+#: src/components/Wiki/Wiki.tsx:247
 #: src/lingui.ts:329
 msgid "Yes"
 msgstr "Ya"

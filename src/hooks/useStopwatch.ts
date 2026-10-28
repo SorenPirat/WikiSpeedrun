@@ -96,8 +96,9 @@ const useStopwatch = () => {
     }
   }, []);
 
-  const startStopwatch = useCallback(() => {
+  const startStopwatch = useCallback((initialElapsedMs?: number) => {
     if (startTimeRef.current === null) {
+      if (initialElapsedMs !== undefined) setPastLapse(initialElapsedMs);
       setStartTime(performance.now());
     }
   }, []);

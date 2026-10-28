@@ -70,7 +70,9 @@ export const createMultiplayerServer = (options = {}) => {
         client.close(1008, "For mange beskeder");
         return;
       }
-      roomManager.handleMessage(client, message);
+      void roomManager.handleMessage(client, message).catch(() => {
+        if (client.readyState === 1) client.send(JSON.stringify({ type: "error", code: "server_error", message: "Der opstod en serverfejl." }));
+      });
     });
     client.on("close", () => roomManager.handleDisconnect(client));
     client.send(JSON.stringify({ type: "connected", serverTime: Date.now() }));
@@ -122,11 +124,12 @@ export const createMultiplayerServer = (options = {}) => {
 export const startServer = async () => {
   const port = Number(process.env.PORT ?? DEFAULT_PORT);
   const allowedOrigin = process.env.ALLOWED_ORIGIN?.trim() ?? "";
+  const teacherAccessCode = process.env.TEACHER_ACCESS_CODE?.trim() ?? "";
   const requireAllowedOrigin = process.env.REQUIRE_ALLOWED_ORIGIN === "true";
   if (requireAllowedOrigin && !allowedOrigin) {
     throw new Error("ALLOWED_ORIGIN skal være sat, når REQUIRE_ALLOWED_ORIGIN=true.");
   }
-  const multiplayerServer = createMultiplayerServer({ allowedOrigin });
+  const multiplayerServer = createMultiplayerServer({ allowedOrigin, teacherAccessCode });
 
   await multiplayerServer.listen(port);
   console.log(`WikiSpeedrun multiplayer server listening on port ${port}`);

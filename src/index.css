@@ -210,6 +210,26 @@
     @apply h-full font-sans;
   }
 
+  button,
+  input,
+  select,
+  textarea {
+    border-radius: 0.75rem;
+    transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  }
+
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--color-primary-blue);
+    outline-offset: 2px;
+  }
+
+  button:not(:disabled):active {
+    transform: translateY(1px);
+  }
+
   /* Match Layout's background so the first paint is already themed (html.dark is
      set by the inline script in index.html before first paint) */
   html,
@@ -228,6 +248,23 @@
 }
 
 @layer components {
+  .ui-panel {
+    border-radius: 1.25rem;
+    box-shadow: 0 12px 30px -24px rgb(15 23 42 / 0.45);
+  }
+
+  .ui-empty {
+    border: 1px dashed var(--color-secondary-border);
+    border-radius: 1rem;
+    background: rgb(0 0 0 / 0.03);
+    padding: 1.25rem;
+    text-align: center;
+  }
+
+  :is(.dark *) .ui-empty {
+    background: rgb(255 255 255 / 0.04);
+  }
+
   .language-option {
     font-family: system-ui, sans-serif;
   }

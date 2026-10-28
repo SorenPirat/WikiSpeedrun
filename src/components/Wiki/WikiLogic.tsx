@@ -71,6 +71,10 @@ const useWikiLogic = () => {
 
     // handle correct link
     if (hrefText) {
+      if (isMultiplayerSessionActive() && multiplayerClient.getConnectionState() !== "connected") {
+        errorToast(t({ comment: "Message shown when a player clicks an article while multiplayer is offline", message: "Vent på forbindelsen, før du vælger et nyt link." }));
+        return;
+      }
       addHrefToHistory(hrefText);
       if (isMultiplayerSessionActive()) {
         const currentArticle = history.at(-1)?.title;

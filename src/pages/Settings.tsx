@@ -93,7 +93,7 @@ const Settings = () => {
         })}
       </p>
 
-      <form className="flex max-w-[650px] flex-col gap-4" onSubmit={startGameHandler}>
+      <form className="ui-panel flex max-w-[650px] flex-col gap-4 border border-secondary-border p-6 shadow-sm" onSubmit={startGameHandler}>
         <RandomModal
           data={modalData}
           open={modalOpen}

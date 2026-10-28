@@ -27,6 +27,7 @@ interface Actions {
     setEndingArticle: (article: Article) => void;
     setIsGameRunning: (flag: boolean) => void;
     addHistoryArticle: (article: ArticleHistory) => void;
+    syncHistoryToArticle: (title: string) => void;
     resetStoreState: () => void;
     increaseCheatingAttemptsCounter: () => void;
     setLastArticleWinningLinks: (links: number) => void;
@@ -101,6 +102,25 @@ export const useGameStore = create<GameStore>()(
               },
               false,
               "addHistoryArticle",
+            );
+          },
+          syncHistoryToArticle: (title: string) => {
+            set(
+              (state) => {
+                let lastMatchingIndex = -1;
+                for (let index = state.history.length - 1; index >= 0; index -= 1) {
+                  if (state.history[index].title === title) {
+                    lastMatchingIndex = index;
+                    break;
+                  }
+                }
+                if (lastMatchingIndex >= 0) {
+                  state.history = state.history.slice(0, lastMatchingIndex + 1);
+                }
+                state.isWin = false;
+              },
+              false,
+              "syncHistoryToArticle",
             );
           },
           resetStoreState: () => {
